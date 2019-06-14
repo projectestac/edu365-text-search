@@ -71,7 +71,9 @@ async function processTarget(page, target) {
   await page.setJavaScriptEnabled(target.js || false);
 
   // Got to the specified path
-  await page.goto(`${BASE_URL}${target.path}`);
+  const response = await page.goto(`${BASE_URL}${target.path}`);
+  // read etag or 'last-modified'
+  target.etag = (response._headers.etag || new Date(response._headers['last-modified'] || Date.now()).toISOString()).replace(/\"/g, '');
 
   // Read body text
   const body = await page.$('body');
@@ -83,7 +85,7 @@ async function processTarget(page, target) {
     target.title = await page.title();
 
   // Update target
-  target.words = getWords(`${target.title} ${bodyText} ${target.extra || ''}`);
+  target.words = getWords(`${target.title} ${bodyText} ${target.descriptors || ''}`);
 
   return target;
 }
@@ -97,6 +99,7 @@ function getWords(txt) {
     }, [])
     .sort()
     .filter((v, n, arr) => v !== null && n > 0 && v !== arr[n - 1] ? true : false)
+    .join(' ');
 }
 
 
