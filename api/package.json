@@ -1,0 +1,26 @@
+{
+  "name": "edu365-text-search",
+  "version": "1.0.0",
+  "description": "Full text search engine for edu365.cat",
+  "main": "index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/projectestac/edu365-text-search"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Francesc Busquets <francesc@gmail.com>",
+  "licenses": [
+    {
+      "type": "EUPL-1.2",
+      "url": "https://spdx.org/licenses/EUPL-1.2.html"
+    }
+  ],
+  "license": "EUPL-1.2",
+  "dependencies": {
+    "dotenv": "^8.0.0",
+    "googleapis": "^40.0.0"
+  }
+}

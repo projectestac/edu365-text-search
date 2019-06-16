@@ -62,3 +62,7 @@ typings/
 
 # generated file with all words to be indexed
 allwords.json
+
+# Googlr API credentials
+credentials.json
+token.json
