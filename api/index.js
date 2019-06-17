@@ -2,7 +2,8 @@
 
 require('dotenv').config();
 const { getOauth2Client } = require('./oAuth2Utils');
-const { getSitePages } = require('./checkSite');
+const { getSitePages, updateEtags } = require('./checkSite');
+const { checkPages } = require('./pageChecker');
 
 const CREDENTIALS_PATH = process.env.CREDENTIALS_PATH;
 const TOKEN_PATH = process.env.TOKEN_PATH;
@@ -24,14 +25,40 @@ async function main() {
 
   try {
     const auth = await getOauth2Client(CREDENTIALS_PATH, TOKEN_PATH, SCOPE);
-    const pages = await getSitePages(auth, SPREADSHEET_ID, SPREADSHEET_PAGE, BASE_URL, true);
-    const n = pages.filter(p => p._updated).length;
-    console.log(`${n} pages will be updated`);
+    const { keys, rows } = await getSitePages(auth, SPREADSHEET_ID, SPREADSHEET_PAGE, BASE_URL);
+    const pages = rows.filter(p => p._updated);
+    await checkPages(pages, BASE_URL);
+
+    saveResults(pages, `data${(0x10000 + Math.random() * 0x10000).toString(16).substring(0, 4).toUpperCase()}.json`);
+
+    await updateEtags(auth, SPREADSHEET_ID, SPREADSHEET_PAGE, keys, pages);
+    console.log(`${pages.length} pages updated!`);
   } catch (err) {
     throw err;
   }
 
 }
+
+const { promisify } = require('util');
+const fs = require('fs');
+//const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
+
+async function saveResults(pages, fileName) {
+  console.log(`Saving result into ${fileName}`);
+  const result = pages.map(({ path, title, lang, descriptors, _text }) => {
+    return {
+      path,
+      title,
+      lang,
+      descriptors,
+      text: _text,
+    };
+  });
+
+  await writeFile(fileName, JSON.stringify(result, null, ' '), 'utf8');
+}
+
 
 try {
   main();

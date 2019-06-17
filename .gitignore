@@ -66,3 +66,5 @@ allwords.json
 # Googlr API credentials
 credentials.json
 token.json
+data*.json
+
