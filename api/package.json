@@ -21,6 +21,7 @@
   "license": "EUPL-1.2",
   "dependencies": {
     "dotenv": "^8.0.0",
+    "excel-column-name": "^1.0.0",
     "googleapis": "^40.0.0"
   }
 }
