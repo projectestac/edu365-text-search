@@ -24,6 +24,7 @@
     "excel-column-name": "^1.0.0",
     "googleapis": "^40.0.0",
     "puppeteer": "^1.17.0",
-    "sorted-array": "^2.0.4"
+    "sorted-array": "^2.0.4",
+    "winston": "^3.2.1"
   }
 }

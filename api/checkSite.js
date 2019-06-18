@@ -11,19 +11,20 @@ Array.prototype.asyncForEach = async function (fn) {
   }
 };
 
+async function getSitePages(auth, spreadsheetId, page, root, logger) {
 
-async function getSitePages(auth, spreadsheetId, page, root) {
-
-  console.log('Getting the list of pages from spreadsheet');
+  logger.info( 'Getting the list of site pages from Google spreadsheet');
   const { keys, rows } = await getSheetData(auth, spreadsheetId, page, true);
 
   await rows.filter(row => row.enabled).asyncForEach(async row => {
     const url = `${root}${row.path}`;
-    console.log(`Checking ${url}`);
+    logger.info( 'Getting the "etag" of %s', url);
     const etag = await getEtagHeader(url);
     row._updated = row.etag && row.etag === etag ? false : true;
-    if (row._updated)
+    if (row._updated) {
+      logger.info( 'This page should be updated: %s', url);
       row.etag = etag;
+    }
   });
 
   return {
@@ -33,14 +34,16 @@ async function getSitePages(auth, spreadsheetId, page, root) {
 }
 
 
-async function updateEtags(auth, spreadsheetId, spreadsheetPage, keys, pages) {
+async function updateEtags(auth, spreadsheetId, spreadsheetPage, keys, pages, logger) {
   const etagCol = keys.indexOf('etag') + 1;
   if (etagCol < 1)
     throw 'The spreadsheet has no "etag" column!';
 
   await pages.asyncForEach(async page => {
-    if (page._row && page.etag)
+    if (page._row && page.etag) {
+      logger.info( 'Updating etag on the spreadsheet for: %s', page.path);
       await updateSingleCell(auth, spreadsheetId, spreadsheetPage, etagCol, page._row, page.etag);
+    }
   });
 
   return pages;
