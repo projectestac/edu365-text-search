@@ -1,8 +1,9 @@
 
-
 const http = require('http');
 const https = require('https');
+const { getOauth2Client } = require('./oAuth2Utils');
 const { getSheetData, updateSingleCell } = require('./gSpreadsheetUtils');
+const { checkPages } = require('./pageChecker');
 
 // extend the Array prototype with an asyncForEach method
 Array.prototype.asyncForEach = async function (fn) {
@@ -11,18 +12,45 @@ Array.prototype.asyncForEach = async function (fn) {
   }
 };
 
+async function checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger) {
+
+  if (!CREDENTIALS_PATH)
+    throw 'Path to credentials file not set!';
+
+  if (!SPREADSHEET_ID || !SPREADSHEET_PAGE)
+    throw 'Invalid spreadsheet ID or range!';
+
+  if (!BASE_URL)
+    throw ('Base URL not set!');
+
+  const auth = await getOauth2Client(CREDENTIALS_PATH, TOKEN_PATH, SCOPE, logger);
+
+  const { keys, rows } = await getSitePages(auth, SPREADSHEET_ID, SPREADSHEET_PAGE, BASE_URL, logger);
+
+  const pages = rows.filter(p => p._updated);
+  logger.info(`%d page(s) should be updated`, pages.length);
+
+  await checkPages(pages, BASE_URL, logger);
+
+  await updateEtags(auth, SPREADSHEET_ID, SPREADSHEET_PAGE, keys, pages, logger);
+  logger.info('%d page(s) have been updated', pages.length);
+
+  return rows;
+}
+
+
 async function getSitePages(auth, spreadsheetId, page, root, logger) {
 
-  logger.info( 'Getting the list of site pages from Google spreadsheet');
+  logger.info('Getting the list of site pages from Google spreadsheet');
   const { keys, rows } = await getSheetData(auth, spreadsheetId, page, true);
 
   await rows.filter(row => row.enabled).asyncForEach(async row => {
     const url = `${root}${row.path}`;
-    logger.info( 'Getting the "etag" of %s', url);
+    logger.info('Getting the "etag" of %s', url);
     const etag = await getEtagHeader(url);
     row._updated = row.etag && row.etag === etag ? false : true;
     if (row._updated) {
-      logger.info( 'This page should be updated: %s', url);
+      logger.info('This page should be updated: %s', url);
       row.etag = etag;
     }
   });
@@ -41,7 +69,7 @@ async function updateEtags(auth, spreadsheetId, spreadsheetPage, keys, pages, lo
 
   await pages.asyncForEach(async page => {
     if (page._row && page.etag) {
-      logger.info( 'Updating etag on the spreadsheet for: %s', page.path);
+      logger.info('Updating etag on the spreadsheet for: %s', page.path);
       await updateSingleCell(auth, spreadsheetId, spreadsheetPage, etagCol, page._row, page.etag);
     }
   });
@@ -74,6 +102,7 @@ async function getEtagHeader(url) {
 }
 
 module.exports = {
+  checkSite,
   getSitePages,
   getEtagHeader,
   updateEtags,
