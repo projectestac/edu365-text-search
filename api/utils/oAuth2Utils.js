@@ -32,7 +32,7 @@ const readline = require('readline');
 const { google } = require('googleapis');
 
 /**
- * Create an OAuth2 client with the given credentials
+ * Creates an OAuth2 client with the given credentials
  * @param {object} credentials - The authorization client credentials.
  * @param {string} tokenPath - Path of the file where the auth token should be found (or otherwise created)
  * @returns {google.auth.OAuth2} - The resulting oAuth2Client
@@ -56,7 +56,7 @@ async function authorize(credentials, tokenPath, scope, logger) {
 }
 
 /**
- * Get and store a new token after prompting for user authorization
+ * Get a new token after prompting for user authorization, and store in a JSON file
  * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
  * @param {string} tokenPath - Path of the file where the auth token should be found (or otherwise created)
  * @returns {object} token - The resulting token
@@ -78,8 +78,8 @@ async function getNewToken(oAuth2Client, tokenPath, scope, logger) {
 }
 
 /**
- * Reads one line from stdin 
- * @param {string} prompt - The prompt text
+ * Reads one line of text from stdin 
+ * @param {string} prompt - The prompt phrase
  */
 async function readOneLine(prompt) {
   return new Promise((resolve, reject) => {
@@ -98,7 +98,7 @@ async function readOneLine(prompt) {
 }
 
 /**
- * Gets an authorization token for Google API services
+ * Gets an authorization token from Google API services
  * @param {google.auth.OAuth2} oAuth2Client - The oAuth2Client object
  * @param {string} code - The code obtained from a given auth URL
  * @returns {Object} - The auth token
@@ -114,7 +114,7 @@ async function oAuth2GetToken(oAuth2Client, code) {
 }
 
 /**
- * Get or create an OAuth2 client with the given credentials and token
+ * Gets or creates an OAuth2 client with the given credentials and token
  * @param {object} credentialsPath - Path of the file with the authorization client credentials.
  * @param {string} tokenPath - Path of the file where the auth token should be found (or otherwise created)
  * @param {string[]} scope - Array of API scopes for wich this credentials are requested

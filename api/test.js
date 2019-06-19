@@ -3,9 +3,11 @@ async function test(logger, ms = 3000) {
   logger.info('HOLA!!!');
   logger.info('com anem?');
 
-  //await delay(ms);
+  logger.verbose('Ens esperem una estoneta...');
 
-  logger.info('Ja ha passat una estona!');
+  await delay(ms);
+
+  logger.info('Ja ha passat l\'estoneta!');
 
   return true;
 }

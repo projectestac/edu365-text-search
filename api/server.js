@@ -1,9 +1,12 @@
 
 require('dotenv').config();
 const express = require('express');
+
 const test = require('./test');
 
 const { createLogger, format, transports } = require('winston');
+const LogToResponse = require('./utils/logToResponse');
+
 const { checkSite } = require('./extractor/checkSite');
 
 const CREDENTIALS_PATH = process.env.CREDENTIALS_PATH;
@@ -27,34 +30,35 @@ const logger = createLogger({
   ],
 });
 
+
 const app = express();
 const port = 8765;
 
 app.get('/', async (req, res) => {
 
-  res.write('<pre>\n');
+  const logtr = new LogToResponse({ response: res, html: true, num: false, eol: '\n', meta: ['timestamp'] });
+  logger.add(logtr);
 
-  //logger.stream({start: -1}).on('log', log => res.write(log));
+  res.append('content-type', 'text/html; charset=utf-8');
 
-  logger.stream({start: -1}).on('log', log => console.log(`XXXXX ${log}`));
-  
-  //const trans=new transports.Stream({stream: res});
-  //logger.add(trans);
+  res.flushHeaders();
+
+  res.write(`Session ID: "${req.sessionID}"\n`)
+
+  logtr.startLog(true);
 
   //const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
-
   await test(logger, 3000);
 
-  res.write('-----------------------\n');
-  res.write('Hello world in PRE mode\n');
-  res.write('-----------------------\n');
-  res.write('</pre>\n');
-  res.write('Això és tot!');
+  logtr.endLog();
+  logger.remove(logtr);
+
+  //res.write(`<p>S'han processat ${rows.length} registres</p>`);
+  res.write('<p>Hello World!</p>\n');
   res.end();
 
-  //logger.log('Procés acabat!');
+  logger.info('Procés acabat!');
 });
-
 
 app.listen(port, () => {
   console.log(`App running on port ${port}`);

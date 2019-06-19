@@ -1,11 +1,36 @@
+/*!
+ *  File    : checkSite.js
+ *  Created : 19/06/2019
+ *  By      : Francesc Busquets <francesc@gmail.com>
+ *
+ *  Checks a full web site, based on the inforation compiled on a Google Spreadsheet
+ *
+ *  @license EUPL-1.2
+ *  @licstart
+ *  (c) 2019 Educational Telematic Network of Catalonia (XTEC)
+ *
+ *  Licensed under the EUPL, Version 1.2 or -as soon they will be approved by
+ *  the European Commission- subsequent versions of the EUPL (the "Licence");
+ *  You may not use this work except in compliance with the Licence.
+ *
+ *  You may obtain a copy of the Licence at:
+ *  https://joinup.ec.europa.eu/software/page/eupl
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the Licence is distributed on an "AS IS" basis, WITHOUT
+ *  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ *  Licence for the specific language governing permissions and limitations
+ *  under the Licence.
+ *  @licend
+ */
 
 const http = require('http');
 const https = require('https');
-const { getOauth2Client } = require('./oAuth2Utils');
-const { getSheetData, updateSingleCell } = require('./gSpreadsheetUtils');
+const { getOauth2Client } = require('../utils/oAuth2Utils');
+const { getSheetData, updateSingleCell } = require('../utils/gSpreadsheetUtils');
 const { checkPages } = require('./pageChecker');
 
-// extend the Array prototype with an asyncForEach method
+// extend the Array prototype with the `asyncForEach` method
 Array.prototype.asyncForEach = async function (fn) {
   for (let index = 0; index < this.length; index++) {
     await fn(this[index], index, this);
@@ -60,7 +85,6 @@ async function getSitePages(auth, spreadsheetId, page, root, logger) {
     rows,
   };
 }
-
 
 async function updateEtags(auth, spreadsheetId, spreadsheetPage, keys, pages, logger) {
   const etagCol = keys.indexOf('etag') + 1;

@@ -1,5 +1,5 @@
 /*!
- *  File    : gSpreadseetUtils.js
+ *  File    : gSpreadsheetUtils.js
  *  Created : 15/06/2019
  *  By      : Francesc Busquets <francesc@gmail.com>
  *
@@ -29,14 +29,16 @@ const excelColumnName = require('excel-column-name');
 
 /**
  * Retrieve the content of a spreadsheet page or cells range, as an array of complex objects.
- * Whe `firstRowAsKeys` is true, the first non-empty row of the sheet or range should contain the field names.
- * The string values "TRUE" and "FALSE" will be converted to booleans.
- * A field named 'row', containint the row number, will be added to each row object.
+ * When `firstRowAsKeys` is true, the first non-empty row should contain the field names.
+ * The string values "TRUE" and "FALSE" are always converted to booleans.
+ * A field named '_row', containing the row number, will be added to each row object.
  * @param {google.auth.OAuth2} auth - A valid OAuth2 object
  * @param {string} spreadsheetId - The Google Spreadsheet ID
  * @param {string} range - The page name, or the range in 'A1' format
  * @param {boolean+} firstRowAsKeys - Indicates that the key names are located on the first row.
- * @return {object} - A composite object with two values: `keys` (ordered array of key names) and `rows` (array of objects with row values)
+ * @return {object} - A composite object with two entries:
+ *                    - `keys`: Ordered array of key names
+ *                    - `rows`: Array of objects (one object per row) with cell values
  */
 async function getSheetData(auth, spreadsheetId, range, firstRowAsKeys = true) {
 
@@ -67,7 +69,8 @@ async function getSheetData(auth, spreadsheetId, range, firstRowAsKeys = true) {
  * @param {google.auth.OAuth2} auth - A valid OAuth2 object
  * @param {string} spreadsheetId - The Google Sheet ID
  * @param {string} range - The page name, or the range in 'A1' format
- * @param {string+} majorDimension - Optional param indicating if the result sould contain an array of rows (`ROWS`) or columns (`COLUMNS`). Default is `ROWS`.
+ * @param {string+} majorDimension - Optional param indicating if the result sould contain
+ *                                   an array of rows (`ROWS`) or columns (`COLUMNS`). Default is `ROWS`.
  * @returns {Array[]}
  */
 async function getRawSpreadsheetData(auth, spreadsheetId, range, majorDimension = 'ROWS') {
@@ -119,7 +122,6 @@ async function updateSingleCell(auth, spreadsheetId, page, col, row, value) {
     });
   });
 }
-
 
 module.exports = {
   getRawSpreadsheetData,
