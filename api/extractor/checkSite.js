@@ -91,10 +91,15 @@ async function updateEtags(auth, spreadsheetId, spreadsheetPage, keys, pages, lo
   if (etagCol < 1)
     throw 'The spreadsheet has no "etag" column!';
 
+  const textCol = keys.indexOf('text') + 1;
+  if (textCol < 1)
+    throw 'The spreadsheet has no "text" column!';
+
   await pages.asyncForEach(async page => {
     if (page._row && page.etag) {
-      logger.info('Updating etag on the spreadsheet for: %s', page.path);
+      logger.info('Updating etag and text on the spreadsheet for: %s', page.path);
       await updateSingleCell(auth, spreadsheetId, spreadsheetPage, etagCol, page._row, page.etag);
+      await updateSingleCell(auth, spreadsheetId, spreadsheetPage, textCol, page._row, page._text || '');
     }
   });
 

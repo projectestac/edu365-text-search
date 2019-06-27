@@ -15,6 +15,7 @@ const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SPREADSHEET_PAGE = process.env.SPREADSHEET_PAGE;
 const SCOPE = ['https://www.googleapis.com/auth/spreadsheets'];
 const BASE_URL = process.env.BASE_URL;
+const AUTH_SECRET = process.env.AUTH_SECRET;
 
 const logger = createLogger({
   format: format.combine(
@@ -34,7 +35,10 @@ const logger = createLogger({
 const app = express();
 const port = 8765;
 
-app.get('/', async (req, res) => {
+app.get('/build-index', async (req, res) => {
+
+  if (AUTH_SECRET !== req.query.auth)
+    throw new Error('Invalid request!');
 
   const logtr = new LogToResponse({ response: res, html: true, num: false, eol: '\n', meta: ['timestamp'] });
   logger.add(logtr);
@@ -43,21 +47,27 @@ app.get('/', async (req, res) => {
 
   res.flushHeaders();
 
-  res.write(`Session ID: "${req.sessionID}"\n`)
+  res.write(`Session ID: "${req.sessionID}"\n`);
 
   logtr.startLog(true);
 
-  //const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
-  await test(logger, 3000);
+  const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
+  //await test(logger, 3000);
 
   logtr.endLog();
   logger.remove(logtr);
 
-  //res.write(`<p>S'han processat ${rows.length} registres</p>`);
-  res.write('<p>Hello World!</p>\n');
+  res.write(`<p>S'han processat ${rows.length} registres</p>`);
+  //res.write('<p>Hello World!</p>\n');
   res.end();
 
   logger.info('Procés acabat!');
+});
+
+app.use((err, req, res, next)=>{
+  console.log('Hi ha un error!')
+  console.error(err);
+  res.status(500).send(err);
 });
 
 app.listen(port, () => {
