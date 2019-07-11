@@ -30,7 +30,8 @@
     "puppeteer": "^1.18.1",
     "sorted-array": "^2.0.4",
     "winston": "^3.2.1",
-    "winston-transport": "^4.3.0"
+    "winston-transport": "^4.3.0",
+    "lodash": ">=4.17.13"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"
