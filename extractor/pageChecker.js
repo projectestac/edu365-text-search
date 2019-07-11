@@ -95,7 +95,7 @@ function getWords(txt) {
  */
 async function checkPages(pages, BASE_URL, logger) {
   logger.info( 'Puppeteer: starting headless browser');
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
   logger.info( 'Puppeteer: building a tab on the browser');
   const browserPage = await browser.newPage();
 
