@@ -1,7 +1,7 @@
 {
-  "name": "edu365-extractor",
+  "name": "edu365-text-search",
   "version": "1.0.0",
-  "description": "Extract all words from a set of HTML pages",
+  "description": "Full text search engine for edu365.cat",
   "main": "index.js",
   "private": true,
   "repository": {
@@ -9,6 +9,7 @@
     "url": "https://github.com/projectestac/edu365-text-search"
   },
   "scripts": {
+    "start": "nodemon --ignore sessions/ server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Francesc Busquets <francesc@gmail.com>",
@@ -20,11 +21,18 @@
   ],
   "license": "EUPL-1.2",
   "dependencies": {
-    "async-csv": "^2.0.1",
-    "chalk": "^2.4.2",
     "dotenv": "^8.0.0",
-    "minimist": "^1.2.0",
-    "puppeteer": "^1.17.0",
-    "sorted-array": "^2.0.4"
+    "excel-column-name": "^1.0.0",
+    "express": "^4.17.1",
+    "fuse.js": "^3.4.5",
+    "googleapis": "^40.0.1",
+    "is-stream": "^2.0.0",
+    "puppeteer": "^1.18.1",
+    "sorted-array": "^2.0.4",
+    "winston": "^3.2.1",
+    "winston-transport": "^4.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
   }
 }

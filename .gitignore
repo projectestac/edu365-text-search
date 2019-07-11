@@ -60,13 +60,11 @@ typings/
 # next.js build output
 .next
 
-# generated file with all words to be indexed
-allwords.json
-
 # Googlr API credentials
 credentials.json
 token.json
 data*.json
 
 # Express session store
-/api/sessions
+/sessions
+
