@@ -1,13 +1,10 @@
 
 require('dotenv').config();
 const express = require('express');
-
-const test = require('./test');
-
+const FulltextSearch = require('./search/FullTextSearch');
 const { createLogger, format, transports } = require('winston');
 const LogToResponse = require('./utils/logToResponse');
-
-const { checkSite } = require('./extractor/checkSite');
+const { checkSite, getSearchData } = require('./extractor/checkSite');
 
 const CREDENTIALS_PATH = process.env.CREDENTIALS_PATH;
 const TOKEN_PATH = process.env.TOKEN_PATH;
@@ -16,6 +13,15 @@ const SPREADSHEET_PAGE = process.env.SPREADSHEET_PAGE;
 const SCOPE = ['https://www.googleapis.com/auth/spreadsheets'];
 const BASE_URL = process.env.BASE_URL;
 const AUTH_SECRET = process.env.AUTH_SECRET;
+const LOG_FILE = process.env.LOG_FILE;
+const APP_PORT=process.env.APP_PORT || 8080;
+
+const logTransports = [
+  new transports.Console(),
+];
+
+if (LOG_FILE)
+  logTransports.push(new transports.File({ filename: LOG_FILE }));
 
 const logger = createLogger({
   format: format.combine(
@@ -25,52 +31,95 @@ const logger = createLogger({
   ),
   level: 'debug',
   handleExceptions: true,
-  transports: [
-    new transports.File({ filename: 'log/combined.log' }),
-    new transports.Console(),
-  ],
+  transports: logTransports,
 });
 
+// Search engine will be build at `app` startup
+let fts = null;
+
+async function buildSearchEngine() {
+  logger.info('Building the search engine');
+  const siteData = await getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, logger);
+  fts = new FulltextSearch(siteData);
+  logger.info(`Search engine ready with ${siteData.length} pages indexed.`);
+};
 
 const app = express();
-const port = 8765;
 
-app.get('/build-index', async (req, res) => {
+app.get('/build-index', async (req, res, next) => {
+  try {
 
-  if (AUTH_SECRET !== req.query.auth)
-    throw new Error('Invalid request!');
+    if (AUTH_SECRET !== req.query.auth)
+      throw new Error('Invalid request!');
 
-  const logtr = new LogToResponse({ response: res, html: true, num: false, eol: '\n', meta: ['timestamp'] });
-  logger.add(logtr);
+    const logtr = new LogToResponse({ response: res, html: true, num: false, eol: '\n', meta: ['timestamp'] });
+    logger.add(logtr);
 
-  res.append('content-type', 'text/html; charset=utf-8');
+    res.append('content-type', 'text/html; charset=utf-8');
+    res.flushHeaders();
 
-  res.flushHeaders();
+    res.write(`<html>\n<head>\n${LogToResponse.CSS}\n</head>\n<body>`);
+    logtr.startLog(true);
 
-  res.write(`Session ID: "${req.sessionID}"\n`);
+    const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
 
-  logtr.startLog(true);
+    logtr.endLog();
+    logger.remove(logtr);
 
-  const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
-  //await test(logger, 3000);
+    res.write(`<p>S'han processat ${rows.length} registres</p>`);
+    res.write('</body>\n</html>');
+    res.end();
 
-  logtr.endLog();
-  logger.remove(logtr);
+    logger.info('Procés acabat!');
 
-  res.write(`<p>S'han processat ${rows.length} registres</p>`);
-  //res.write('<p>Hello World!</p>\n');
-  res.end();
-
-  logger.info('Procés acabat!');
+  } catch (err) {
+    next(err.toString());
+    logger.remove(logtr);
+  }
 });
 
-app.use((err, req, res, next)=>{
+app.get('/search', (req, res) => {
+  const q = req.query.q;
+  const result = q && fts ? fts.search(q) : [];
+  logger.info(`Query "${q}" - ${result.length} results`);
+  res.append('content-type', 'application/json; charset=utf-8');
+  res.end(JSON.stringify(result, null, 1));
+});
+
+app.get('/refresh', async (req, res, next) => {
+  try {
+    if (AUTH_SECRET !== req.query.auth)
+      throw new Error('Invalid request!');
+
+    const logtr = new LogToResponse({ response: res, html: true, num: false, eol: '\n', meta: ['timestamp'] });
+    logger.add(logtr);
+
+    res.append('content-type', 'text/html; charset=utf-8');
+    res.flushHeaders();
+
+    res.write(`<html>\n<head>\n${LogToResponse.CSS}\n</head>\n<body>`);
+    logtr.startLog(true);
+
+    await buildSearchEngine();
+
+    logtr.endLog();
+    logger.remove(logtr);
+    res.end();
+
+  } catch (err) {
+    next(err.toString());
+    logger.remove(logtr);
+  }
+});
+
+app.use((err, req, res, next) => {
   console.log('Hi ha un error!')
-  console.error(err);
-  res.status(500).send(err);
+  console.error(err.toString());
+  res.status(500).send(err.toString());
 });
 
-app.listen(port, () => {
-  console.log(`App running on port ${port}`);
+app.listen(APP_PORT, async () => {
+  await buildSearchEngine();
+  console.log(`App running on port ${APP_PORT}`);
 });
 

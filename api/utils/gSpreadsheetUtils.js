@@ -44,7 +44,7 @@ async function getSheetData(auth, spreadsheetId, range, firstRowAsKeys = true) {
 
   const data = await getRawSpreadsheetData(auth, spreadsheetId, range, 'ROWS');
   if (!data || !data.values)
-    throw 'Unable to read the requested spredsheet data!';
+    throw new Error('Unable to read the requested spredsheet data!');
 
   const keys = data.values[0].map((k, n) => (firstRowAsKeys && k) || excelColumnName.intToExcelCol(n));
   const rows = [];

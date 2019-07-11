@@ -65,7 +65,7 @@ class LogToResponse extends Transport {
     this.meta = meta;
 
     if (!response || !isStream(response)) {
-      throw new Error('A writable stream should be declared as "response" in options.');
+      throw new Error('A writable stream should be declared as a "response" in options.');
     }
   }
 
@@ -81,7 +81,7 @@ class LogToResponse extends Transport {
     const meta = this.meta.map(m => info[m]).filter(m => typeof m !== 'undefined').join(' | ');
 
     if (this.html)
-      this.response.write(`<li>${meta ? `[<span class="meta">${meta}</span>] ` : ''}<span class="level">${level}</span> ${message}</li>${this.eol}`);
+      this.response.write(`<li data-level="${level}">${meta ? `[<span class="meta">${meta}</span>] ` : ''}<span class="level">${level}</span> ${message}</li>${this.eol}`);
     else
       this.response.write(`${meta ? `[${meta}] ` : ''}${level} - ${message}${this.eol}`);
 
@@ -94,7 +94,7 @@ class LogToResponse extends Transport {
    */
   startLog() {
     if (this.html)
-      this.response.write(`<${this.num ? 'ol' : 'ul'} class="log">${this.eol}`);
+      this.response.write(`<${this.num ? 'ol' : 'ul'} class="log" >${this.eol}`);
   }
 
   /**
@@ -104,6 +104,45 @@ class LogToResponse extends Transport {
     if (this.html)
       this.response.write(`</${this.num ? 'ol' : 'ul'}>${this.eol}`);
   }
+
 }
+
+LogToResponse.CSS = `
+<style type="text/css">
+
+  .log {
+    font-family: monospace;
+  }
+  
+  ul.log {
+    list-style-type: none;
+  }
+
+  .log .level {
+    font-weight: bold;
+  }
+
+  .log li[data-level="verbose"] {
+    font-style: italic;
+  }
+
+  .log li[data-level="verbose"] .level {
+    color: darkorange;
+  }
+
+  .log li[data-level="info"] .level {
+    color: green;
+  }
+  
+  .log li[data-level="error"] {
+    font-weight: bold;
+  }
+
+  .log li[data-level="error"] .level {
+    color: red;
+  }
+
+</style>
+`;
 
 module.exports = LogToResponse;

@@ -40,13 +40,13 @@ Array.prototype.asyncForEach = async function (fn) {
 async function checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger) {
 
   if (!CREDENTIALS_PATH)
-    throw 'Path to credentials file not set!';
+    throw new Error('Path to credentials file not set!');
 
   if (!SPREADSHEET_ID || !SPREADSHEET_PAGE)
-    throw 'Invalid spreadsheet ID or range!';
+    throw new Error('Invalid spreadsheet ID or range!');
 
   if (!BASE_URL)
-    throw ('Base URL not set!');
+    throw new Error('Base URL not set!');
 
   const auth = await getOauth2Client(CREDENTIALS_PATH, TOKEN_PATH, SCOPE, logger);
 
@@ -63,6 +63,31 @@ async function checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHE
   return rows;
 }
 
+async function getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, logger) {
+
+  if (!CREDENTIALS_PATH)
+    throw new Error('Path to credentials file not set!');
+
+  if (!SPREADSHEET_ID || !SPREADSHEET_PAGE)
+    throw new Error('Invalid spreadsheet ID or range!');
+
+  const auth = await getOauth2Client(CREDENTIALS_PATH, TOKEN_PATH, SCOPE, logger);
+
+  logger.info('Getting the list of site pages from Google spreadsheet');
+  const { rows } = await getSheetData(auth, SPREADSHEET_ID, SPREADSHEET_PAGE, true);
+
+  const result = rows.filter(p => p.enabled && p.url && p.text).map(p => ({
+    url: p.url,
+    title: p.title || p.url,
+    descriptors: p.descriptors || '',
+    lang: p.lang,
+    text: p.text,
+  }));
+
+  logger.info('%d page(s) available for full-text search', result.length);
+
+  return result;
+}
 
 async function getSitePages(auth, spreadsheetId, page, root, logger) {
 
@@ -89,11 +114,11 @@ async function getSitePages(auth, spreadsheetId, page, root, logger) {
 async function updateEtags(auth, spreadsheetId, spreadsheetPage, keys, pages, logger) {
   const etagCol = keys.indexOf('etag') + 1;
   if (etagCol < 1)
-    throw 'The spreadsheet has no "etag" column!';
+    throw new Error('The spreadsheet has no "etag" column!');
 
   const textCol = keys.indexOf('text') + 1;
   if (textCol < 1)
-    throw 'The spreadsheet has no "text" column!';
+    throw new Error('The spreadsheet has no "text" column!');
 
   await pages.asyncForEach(async page => {
     if (page._row && page.etag) {
@@ -109,7 +134,7 @@ async function updateEtags(auth, spreadsheetId, spreadsheetPage, keys, pages, lo
 async function getEtagHeader(url) {
 
   if (!url || !url.startsWith('http'))
-    throw `Invalid URL: ${url}`;
+    throw new Error(`Invalid URL: ${url}`);
 
   const httpPackage = url.startsWith('https') ? https : http;
 
@@ -132,6 +157,7 @@ async function getEtagHeader(url) {
 
 module.exports = {
   checkSite,
+  getSearchData,
   getSitePages,
   getEtagHeader,
   updateEtags,
