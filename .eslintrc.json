@@ -8,7 +8,7 @@
     "parserOptions": {
         "ecmaVersion": 2018,
         "ecmaFeatures": {
-            "jsx": false,
+            "jsx": false
         },
         "sourceType": "module"
     },
