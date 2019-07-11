@@ -85,7 +85,7 @@ app.get('/build-index', async (req, res, next) => {
 app.get('/refresh', async (req, res, next) => {
 
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  logger.info(`/refresh called from ${ip}`)
+  logger.info(`/refresh called from ${ip}`);
 
   const logtr = new LogToResponse({ response: res, html: true, num: false, eol: '\n', meta: ['timestamp'] });
   logger.add(logtr);
