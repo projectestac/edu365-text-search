@@ -81,16 +81,6 @@ app.get('/build-index', async (req, res, next) => {
 
 });
 
-// Perform a text search
-app.get('/search', (req, res) => {
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  const q = req.query.q;
-  const result = q && searchEngine ? searchEngine.search(q) : [];
-  logger.info(`Query "${q}" from ${ip} returned ${result.length} results`);
-  res.append('content-type', 'application/json; charset=utf-8');
-  res.end(JSON.stringify(result, null, 1));
-});
-
 // Reload the full-text search engine
 app.get('/refresh', async (req, res, next) => {
 
@@ -118,6 +108,17 @@ app.get('/refresh', async (req, res, next) => {
   }
 
   logger.remove(logtr);
+});
+
+// Perform a text search
+app.get('/', (req, res) => {
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const q = req.query.q || '';
+  const result = q && searchEngine ? searchEngine.search(q) : [];
+  logger.info(`Query "${q}" from ${ip} returned ${result.length} results`);
+  res.append('Access-Control-Allow-Origin', '*');
+  res.append('content-type', 'application/json; charset=utf-8');
+  res.end(JSON.stringify(result, null, 1));
 });
 
 app.use((err, _req, res, _next) => {
