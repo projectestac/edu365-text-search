@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ca">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cercador edu365</title>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      const endpoint = "https://met.xtec.cat/edu365/";
+      const msgArea = document.querySelector("#msg");
+      const title = document.querySelector("#msg");
+      const results = document.querySelector("#results");
+      const params = new URLSearchParams(location.search || "");
+      const q = params.get("q");
+
+      if (q) {
+        title.innerHTML = `Resultats de la cerca "${q}"`;
+        msgArea.innerHTML = "S'està cercant...";
+        fetch(`${endpoint}${location.search}`)
+          .then(response => response.json())
+          .then(matches => {
+            msgArea.innerHTML =
+              matches.length === 0
+                ? `No s'ha trobat cap resultat`
+                : matches.length === 1
+                  ? `S'ha trobat un resultat:`
+                  : `S'han trobat ${matches.length} resultats:`;
+
+            matches.forEach(match => {
+              const li = document.createElement("li");
+              li.innerHTML = `<a href="${match.url}">${match.title}</a>`;
+              results.appendChild(li);
+            });
+          })
+          .catch(err => {
+            msgArea.innerHTML = `ERROR: ${err.toString()}`;
+          });
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <h1 id="title">Resultats de la cerca</h1>
+  <div id="msg"></div>
+  <ul id="results"></ul>
+</body>
+
+</html>
