@@ -10,7 +10,7 @@
 
       const endpoint = "https://met.xtec.cat/edu365/";
       const msgArea = document.querySelector("#msg");
-      const title = document.querySelector("#msg");
+      const title = document.querySelector("#title");
       const results = document.querySelector("#results");
       const params = new URLSearchParams(location.search || "");
       const q = params.get("q");
@@ -26,7 +26,7 @@
                 ? `No s'ha trobat cap resultat`
                 : matches.length === 1
                   ? `S'ha trobat un resultat:`
-                  : `S'han trobat ${matches.length} resultats:`;
+                  : `S'han trobat ${matches.length} pàgines:`;
 
             matches.forEach(match => {
               const li = document.createElement("li");
