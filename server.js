@@ -14,13 +14,14 @@ const SCOPE = ['https://www.googleapis.com/auth/spreadsheets'];
 const BASE_URL = process.env.BASE_URL;
 const AUTH_SECRET = process.env.AUTH_SECRET;
 const LOG_FILE = process.env.LOG_FILE;
+const LOG_CONSOLE = process.env.LOG_CONSOLE !== 'false';
+const LOG_LEVEL = process.env.LOG_LEVEL || 'debug';
 const APP_PORT = process.env.APP_PORT || 8080;
 
-// Winston transports used by the app logger
-const logTransports = [
-  new transports.Console(),
-];
-
+// Winston transports used by the main logger
+const logTransports = [];
+if (LOG_CONSOLE)
+  logTransports.push(new transports.Console());
 if (LOG_FILE)
   logTransports.push(new transports.File({ filename: LOG_FILE }));
 
@@ -31,7 +32,7 @@ const logger = createLogger({
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`),
   ),
-  level: 'debug',
+  level: LOG_LEVEL,
   handleExceptions: true,
   transports: logTransports,
 });
@@ -39,7 +40,7 @@ const logger = createLogger({
 // The main search engine, built at server startup
 let searchEngine = null;
 
-// Builds the full-text search engine
+// Prepare the full-text search engine
 async function buildSearchEngine() {
   logger.info('Building the search engine');
   const siteData = await getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, logger);
@@ -47,10 +48,10 @@ async function buildSearchEngine() {
   logger.info(`Search engine ready with ${siteData.length} pages indexed.`);
 };
 
-// Build the main app
+// The main app
 const app = express();
 
-// Re-scan the entire site, rebuilding the main index on the spreadsheet
+// Re-scan the entire site, updating data on the Google spreadsheet
 app.get('/build-index', async (req, res, next) => {
 
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -75,13 +76,13 @@ app.get('/build-index', async (req, res, next) => {
 
   } catch (err) {
     next(err.toString());
+  } finally {
+    logger.remove(logtr);
   }
-
-  logger.remove(logtr);
 
 });
 
-// Reload the full-text search engine
+// Reload the full-text search engine (used when data has been updated)
 app.get('/refresh', async (req, res, next) => {
 
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -105,12 +106,13 @@ app.get('/refresh', async (req, res, next) => {
 
   } catch (err) {
     next(err.toString());
+  } finally {
+    logger.remove(logtr);
   }
 
-  logger.remove(logtr);
 });
 
-// Perform a text search
+// Perform text search
 app.get('/', (req, res) => {
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const q = req.query.q || '';
@@ -121,13 +123,14 @@ app.get('/', (req, res) => {
   res.end(JSON.stringify(result, null, 1));
 });
 
+// Return 500 for catched errors
 app.use((err, _req, res, _next) => {
   logger.error(err.toString());
   res.status(500).send(err.toString());
 });
 
+// Start the express server and initialize the search engine
 app.listen(APP_PORT, async () => {
   await buildSearchEngine();
   logger.info(`App running on port ${APP_PORT}`);
 });
-

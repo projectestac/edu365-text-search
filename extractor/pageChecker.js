@@ -26,6 +26,7 @@
 
 const SortedArray = require('sorted-array');
 const puppeteer = require('puppeteer');
+const PUPPETEER_SANDBOX = process.env.PUPPETEER_SANDBOX !== 'false';
 
 // Build the stop-words list
 const STOP_WORDS = new SortedArray(Object.values(require('./stopwords.json')).reduce((acc, val) => acc.concat(val), []));
@@ -41,18 +42,18 @@ async function processPage(browserPage, page, BASE_URL, logger) {
 
   const url = `${BASE_URL}${page.path}`;
 
-  logger.info( 'Processing %s', url);
+  logger.info('Processing %s', url);
 
   // Enable or disable JavaScript
-  logger.verbose( `Javascript will be ${page.js ? 'enabled' : 'disabled'} for ${url}`);
+  logger.verbose(`Javascript will be ${page.js ? 'enabled' : 'disabled'} for ${url}`);
   await browserPage.setJavaScriptEnabled(page.js || false);
 
   // Got to the specified path
-  logger.verbose( 'Instructing puppeteer to navigate to %s', url);
+  logger.verbose('Instructing puppeteer to navigate to %s', url);
   await browserPage.goto(url);
 
   // Read body text
-  logger.verbose( 'Reading the body text of %s', url);
+  logger.verbose('Reading the body text of %s', url);
   const body = await browserPage.$('body');
   const bodyText = await browserPage.evaluate(body => body.innerText, body);
   await body.dispose();
@@ -60,7 +61,7 @@ async function processPage(browserPage, page, BASE_URL, logger) {
   // Read title
   if (!page.title) {
     page.title = await browserPage.title();
-    logger.verbose( 'The title of %s will be: "%s"', url, page.title);
+    logger.verbose('The title of %s will be: "%s"', url, page.title);
   }
 
   // Update target
@@ -94,9 +95,9 @@ function getWords(txt) {
  * @param {winston.Logger} logger - The logger to be used during the process
  */
 async function checkPages(pages, BASE_URL, logger) {
-  logger.info( 'Puppeteer: starting headless browser');
-  const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
-  logger.info( 'Puppeteer: building a tab on the browser');
+  logger.info('Puppeteer: starting headless browser');
+  const browser = await puppeteer.launch({ args: PUPPETEER_SANDBOX ? [] : ['--no-sandbox', '--disable-setuid-sandbox'] });
+  logger.info('Puppeteer: building a tab on the browser');
   const browserPage = await browser.newPage();
 
   // Sequential processing of targets
@@ -106,7 +107,7 @@ async function checkPages(pages, BASE_URL, logger) {
     if (page._updated)
       await processPage(browserPage, page, BASE_URL, logger);
   }
-  logger.info( 'Puppeteer: finishing browser');
+  logger.info('Puppeteer: finishing browser');
   await browser.close();
   return pages;
 }
