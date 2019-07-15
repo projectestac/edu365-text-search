@@ -12,9 +12,9 @@ The project was made upon the following components:
 - [Winston](https://github.com/winstonjs/winston) as advanced logging system.
 - [PM2](http://pm2.keymetrics.io/) to launch and monitor the API server.
 
-To use this app you must first create a Google Spreadsheet with a single page named "pages", having a first row with column titles and the following columns:
+To use this app you must first create a Google Spreadsheet with a single page named "pages". This page should have a first row with the following column titles:
 
-| column name   | cell content                                                                                                   | editable |
+| column        | cell content                                                                                                   | editable |
 |---------------|----------------------------------------------------------------------------------------------------------------|:--------:|
 | `path`        | Relative path to each page on the site                                                                         | ✔        |
 | `title`       | The page title                                                                                                 | ✔        |
@@ -26,4 +26,38 @@ To use this app you must first create a Google Spreadsheet with a single page na
 | `url`         | Final URL of the page, usually made with a calc formula like: `="http://edu365.cat" & A2`                      | ❌       |
 | `text`        | This is where the search engine stores the word list of each page                                              | ❌       |
 
+You should fill-in the first 6 colums of this spreadsheet with the pages to be indexed, one row per page.
+
+Then, you must obtain the __OAuth2 credentials__ from the [Google API console](https://console.developers.google.com/). These credentials should be downloaded in a file named `credentials.json` and stored on this project root folder. You should also enable the [Google Sheets API](https://developers.google.com/sheets/api/quickstart/js) for a user having read and write rights on this sheet.
+
+The next step is to make a copy of the provided file `.env-example` with the name `.env`.
+
+Then, edit `.env` and fill-in the field `SPREADSHEET_ID` with the identifier of your spreadsheet (the part between `/spreadsheets/d/` and `/edit` of the spreadsheet URL). You should also write a random text on the `AUTH_SECRET` field. Other settings like the `APP_PORT`, `LOG_LEVEL` or `LOG_FILE` can be set at this stage.
+
+Finally, install the NPM dependencies of the project:
+
+```bash
+# Go to the main project directory:
+$ cd path/to/edu365-text-search
+
+# Install the required npm components:
+$ npm install
+```
+
+Launch the server using NPM:
+```bash
+$ cd path/to/edu365-text-search
+$ npm start
+```
+
+In order to build the index, launch this URL on your preferred browser:
+```
+http://localhost:%APP_PORT%/build-index?auth=%AUTH_SECRET%
+```
+... replacing `%APP_PORT%` and `%AUTH_SECRET%` by the real values of these variables in `.env`.
+
+To perform a query, just use this URL:
+```
+http://localhost:%APP_PORT%/q=%QUERY_TEXT%
+```
 

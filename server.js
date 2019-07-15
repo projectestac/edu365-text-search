@@ -69,6 +69,7 @@ app.get('/build-index', async (req, res, next) => {
     res.write(`<html>\n<head>\n${LogToResponse.CSS}\n</head>\n<body>\n`);
     logtr.startLog(true);
     const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
+    await buildSearchEngine();
     logtr.endLog();
     res.write(`<p>${rows.length} pages have been processed</p>\n`);
     res.write('</body>\n</html>');
@@ -112,11 +113,11 @@ app.get('/refresh', async (req, res, next) => {
 
 });
 
-// Perform text search
+// Perform a search
 app.get('/', (req, res) => {
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const q = req.query.q || '';
-  const result = q && searchEngine ? searchEngine.search(q) : [];
+  const result = (q && searchEngine ? searchEngine.search(q) : []).map(({ url, title, lang }) => ({ url, title, lang }));
   logger.info(`Query "${q}" from ${ip} returned ${result.length} results`);
   res.append('Access-Control-Allow-Origin', '*');
   res.append('content-type', 'application/json; charset=utf-8');
