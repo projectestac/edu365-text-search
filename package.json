@@ -25,7 +25,7 @@
     "excel-column-name": "^1.0.0",
     "express": "^4.17.1",
     "fuse.js": "^3.4.5",
-    "googleapis": "^41.0.0",
+    "googleapis": "^41.0.1",
     "is-stream": "^2.0.0",
     "puppeteer": "^1.18.1",
     "sorted-array": "^2.0.4",

@@ -3,6 +3,8 @@ Full text search utilities for websites with static pages.
 
 This project was initially created for [edu365.cat](http://edu365.cat/), a portal with educational content promoted by the Department of Education of the Government of Catalonia. The site was originally built with static HTML pages, and therefore did not have any search engine. "edu365-text-search" extracts the text content of the entire site and provides a simple search API. It uses a shared Google spreadsheet as a backend for URLs, titles, descriptors and significative words of the site pages.
 
+You will need [NodeJS](https://nodejs.org) installed on your system in order to build the main application.
+
 The project was made upon the following components:
 
 - [Express](https://expressjs.com/) as a HTTP API server.
@@ -12,29 +14,35 @@ The project was made upon the following components:
 - [Winston](https://github.com/winstonjs/winston) as advanced logging system.
 - [PM2](http://pm2.keymetrics.io/) to launch and monitor the API server.
 
+### Build the Google spreadsheet
+
 To use this app you must first create a Google Spreadsheet with a single page named "pages". This page should have a first row with the following column titles:
 
-| column        | cell content                                                                                                   | editable |
+| Column name   | Cell content                                                                                                   | type     |
 |---------------|----------------------------------------------------------------------------------------------------------------|:--------:|
-| `path`        | Relative path to each page on the site                                                                         | ✔        |
-| `title`       | The page title                                                                                                 | ✔        |
-| `descriptors` | Optional descriptors for each page, separed by blank spaces                                                    | ✔        |
-| `lang`        | ISO 639-1 language code of the page (currently not used)                                                       | ✔        |
-| `js`          | A true/false switch indicating if the page needs to execute JavaScript to build its final content              | ✔        |
-| `enabled`     | Another true/false switch, used to exclude specific pages from the search                                      | ✔        |
-| `etag`        | This is where the indexer stores the current [HTTP ETag](https://en.wikipedia.org/wiki/HTTP_ETag) of each page | ❌       |
-| `url`         | Final URL of the page, usually made with a calc formula like: `="http://edu365.cat" & A2`                      | ❌       |
-| `text`        | This is where the search engine stores the word list of each page                                              | ❌       |
+| `path`        | Relative path to each page on the site                                                                         | manual   |
+| `title`       | The page title                                                                                                 | manual   |
+| `descriptors` | Optional descriptors for each page, separed by blank spaces                                                    | manual   |
+| `lang`        | ISO 639-1 language code of the page (currently not used)                                                       | manual   |
+| `js`          | A true/false switch indicating if the page needs to execute JavaScript to build its final content              | manual   |
+| `enabled`     | Another true/false switch, used to exclude specific pages from the search                                      | manual   |
+| `etag`        | This is where the indexer stores the current [HTTP ETag](https://en.wikipedia.org/wiki/HTTP_ETag) of each page | auto     |
+| `url`         | Final URL of the page, usually made with a calc formula like: `="http://edu365.cat" & A2`                      | auto     |
+| `text`        | This is where the search engine stores the word list of each page                                              | auto     |
 
-You should fill-in the first 6 colums of this spreadsheet with the pages to be indexed, one row per page.
+The first 6 colums of this spreadsheet should be filled-in for all the pages to be indexed, one row per page.
 
-Then, you must obtain the __OAuth2 credentials__ from the [Google API console](https://console.developers.google.com/). These credentials should be downloaded in a file named `credentials.json` and stored on this project root folder. You should also enable the [Google Sheets API](https://developers.google.com/sheets/api/quickstart/js) for a user having read and write rights on this sheet.
+### Credential settings
 
-The next step is to make a copy of the provided file `.env-example` with the name `.env`.
+You must obtain the __OAuth2 credentials__ from the [Google API console](https://console.developers.google.com/). These credentials should be downloaded in a file named `credentials.json` and stored on this project root folder. You should also enable the [Google Sheets API](https://developers.google.com/sheets/api/quickstart/js) for a user having read and write rights on this sheet.
 
-Then, edit `.env` and fill-in the field `SPREADSHEET_ID` with the identifier of your spreadsheet (the part between `/spreadsheets/d/` and `/edit` of the spreadsheet URL). You should also write a random text on the `AUTH_SECRET` field. Other settings like the `APP_PORT`, `LOG_LEVEL` or `LOG_FILE` can be set at this stage.
+The next step will be to make a duplicate of the file `.env-example` with the name `.env`.
 
-Finally, install the NPM dependencies of the project:
+Edit `.env` and set the value of `SPREADSHEET_ID` to the identifier of your spreadsheet (the part between `/spreadsheets/d/` and `/edit` of the spreadsheet URL). You also should write a random text on `AUTH_SECRET`. Other settings like the `APP_PORT`, `LOG_LEVEL` or `LOG_FILE` are optional.
+
+### Build the main application
+
+Install the dependencies using NPM or Yarn:
 
 ```bash
 # Go to the main project directory:
@@ -44,20 +52,54 @@ $ cd path/to/edu365-text-search
 $ npm install
 ```
 
-Launch the server using NPM:
+Then launch the server using NPM:
 ```bash
 $ cd path/to/edu365-text-search
 $ npm start
 ```
 
-In order to build the index, launch this URL on your preferred browser:
+### Basic usage
+
+After every edit of any page on the site, this URL should be launched on your browser:
 ```
-http://localhost:%APP_PORT%/build-index?auth=%AUTH_SECRET%
+http://%HOST%:%APP_PORT%/build-index?auth=%AUTH_SECRET%
 ```
-... replacing `%APP_PORT%` and `%AUTH_SECRET%` by the real values of these variables in `.env`.
+... replacing `%HOST%` by the host name or IP (usually 'localhost' on the development environment) and `%APP_PORT%`, `%AUTH_SECRET%` by the real values of these variables in `.env`.
 
 To perform a query, just use this URL:
 ```
-http://localhost:%APP_PORT%/q=%QUERY_TEXT%
+http://%HOST%:%APP_PORT%/q=%QUERY_TEXT%
 ```
+
+You will find examples of a search form and results page inside `/test`.
+
+### Advanced settings
+
+This application uses [Fuse.js](https://fusejs.io/) by [Kiro Risk](https://kiro.me/) to perform the search queries. Fuse has a lot of specific settings that can be adjusted to fit your needs. The settings currently used by edu365-text-search are:
+
+```javascript
+// See file: /search/FullTextSearch.js
+FullTextSearch.DEFAULT_SEARCH_OPTIONS = {
+  caseSensitive: false,
+  shouldSort: true,
+  tokenize: true,
+  matchAllTokens: true,
+  includeScore: false,
+  includeMatches: false,
+  threshold: 0.2,
+  location: 0,
+  distance: 4,
+  maxPatternLength: 32,
+  minMatchCharLength: 2,
+};
+```
+
+Please check out [Fuse.js](https://fusejs.io/) for a full description of each option.
+
+
+
+
+## License
+"Edu365 text search" is an open source development made by the Department of Education of the Government of Catalonia, released under the terms of the [European Union Public Licence v. 1.2](https://eupl.eu/1.2/en/).
+
 

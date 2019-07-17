@@ -28,6 +28,8 @@ const SortedArray = require('sorted-array');
 const puppeteer = require('puppeteer');
 const PUPPETEER_SANDBOX = process.env.PUPPETEER_SANDBOX !== 'false';
 
+/* global document */
+
 // Build the stop-words list
 const STOP_WORDS = new SortedArray(Object.values(require('./stopwords.json')).reduce((acc, val) => acc.concat(val), []));
 
@@ -52,6 +54,10 @@ async function processPage(browserPage, page, BASE_URL, logger) {
   logger.verbose('Instructing puppeteer to navigate to %s', url);
   await browserPage.goto(url);
 
+  // Read `meta` tags
+  logger.verbose('Reading meta tags of %s', url);
+  const metaData = await browserPage.evaluate(() => Array.from(document.querySelectorAll('meta[name="description"], meta[name="keywords"]')).map(m => m.content || ''));
+
   // Read body text
   logger.verbose('Reading the body text of %s', url);
   const body = await browserPage.$('body');
@@ -65,7 +71,7 @@ async function processPage(browserPage, page, BASE_URL, logger) {
   }
 
   // Update target
-  page._text = getWords(`${page.title} ${bodyText} ${page.descriptors || ''}`);
+  page._text = getWords(`${page.title} ${bodyText} ${page.descriptors || ''} ${metaData.join(' ')}`);
 
   return page;
 }
