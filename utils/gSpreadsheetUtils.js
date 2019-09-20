@@ -28,17 +28,17 @@ const { google } = require('googleapis');
 const excelColumnName = require('excel-column-name');
 
 /**
- * Retrieve the content of a spreadsheet page or cells range, as an array of complex objects.
+ * Retrieve the content of a sheet or cell range as an array of complex objects.
  * When `firstRowAsKeys` is true, the first non-empty row should contain the field names.
- * The string values "TRUE" and "FALSE" are always converted to booleans.
+ * String values "TRUE" and "FALSE" are always converted to boolean.
  * A field named '_row', containing the row number, will be added to each row object.
  * @param {google.auth.OAuth2} auth - A valid OAuth2 object
  * @param {string} spreadsheetId - The Google Spreadsheet ID
- * @param {string} range - The page name, or the range in 'A1' format
- * @param {boolean+} firstRowAsKeys - Indicates that the key names are located on the first row.
- * @return {object} - A composite object with two entries:
+ * @param {string} range - Sheet name or range in 'A1' format
+ * @param {boolean+} firstRowAsKeys - When `true`, the key names are on the first row
+ * @return {object} - An object with two entries:
  *                    - `keys`: Ordered array of key names
- *                    - `rows`: Array of objects (one object per row) with cell values
+ *                    - `rows`: Array of objects (one object per row) with the cell values
  */
 async function getSheetData(auth, spreadsheetId, range, firstRowAsKeys = true) {
 
@@ -65,10 +65,10 @@ async function getSheetData(auth, spreadsheetId, range, firstRowAsKeys = true) {
 }
 
 /**
- * Get the values of a Google spreadsheet page as an array of arrays.
+ * Get the values of a sheet as an array of arrays.
  * @param {google.auth.OAuth2} auth - A valid OAuth2 object
- * @param {string} spreadsheetId - The Google Sheet ID
- * @param {string} range - The page name, or the range in 'A1' format
+ * @param {string} spreadsheetId - The Google Spredsheets ID
+ * @param {string} range - Sheet name or range in 'A1' format
  * @param {string+} majorDimension - Optional param indicating if the result sould contain
  *                                   an array of rows (`ROWS`) or columns (`COLUMNS`). Default is `ROWS`.
  * @returns {Array[]}
@@ -89,13 +89,13 @@ async function getRawSpreadsheetData(auth, spreadsheetId, range, majorDimension 
 }
 
 /**
- * Updates a single cell on a Google Spreadsheet
+ * Updates a single cell on a Google spreadsheet
  * @param {google.auth.OAuth2} auth - A valid OAuth2 object
- * @param {string} spreadsheetId - The Google Sheet ID
- * @param {string} page - The spreadsheet page name
- * @param {number} col - The column number (one-based index)
- * @param {number} row  - The row number (one-based index)
- * @param {any} value  - The value to be assigned to the specified cell
+ * @param {string} spreadsheetId - Spreadsheet ID
+ * @param {string} page - Sheet name
+ * @param {number} col - Column number (one-based index)
+ * @param {number} row  - Row number (one-based index)
+ * @param {any} value  - Value to be assigned to the cell
  */
 async function updateSingleCell(auth, spreadsheetId, page, col, row, value) {
 

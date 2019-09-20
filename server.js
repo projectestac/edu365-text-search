@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 
 require('dotenv').config();
 const express = require('express');
@@ -68,8 +69,12 @@ app.get('/build-index', async (req, res, next) => {
     res.flushHeaders();
     res.write(`<html>\n<head>\n${LogToResponse.CSS}\n</head>\n<body>\n`);
     logtr.startLog(true);
+
+    // This is the real job: check the site for updated pages and reload strings on the search engine
     const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
     await buildSearchEngine();
+    // ----
+
     logtr.endLog();
     res.write(`<p>${rows.length} pages have been processed</p>\n`);
     res.write('</body>\n</html>');
@@ -100,7 +105,10 @@ app.get('/refresh', async (req, res, next) => {
     res.flushHeaders();
     res.write(`<html>\n<head>\n${LogToResponse.CSS}\n</head>\n<body>\n`);
     logtr.startLog(true);
+
+    // Update the search engine:
     await buildSearchEngine();
+
     logtr.endLog();
     res.write('</body>\n</html>');
     res.end();
@@ -117,7 +125,11 @@ app.get('/refresh', async (req, res, next) => {
 app.get('/', (req, res) => {
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const q = req.query.q || '';
-  const result = (q && searchEngine ? searchEngine.search(q) : []).map(({ url, title, lang }) => ({ url, title, lang }));
+
+  // Perform the query and collect only URL, title and language for each result:
+  const result = (q && searchEngine ? searchEngine.search(q) : [])
+    .map(({ url, title, lang }) => ({ url, title, lang }));
+
   logger.info(`Query "${q}" from ${ip} returned ${result.length} results`);
   res.append('Access-Control-Allow-Origin', '*');
   res.append('content-type', 'application/json; charset=utf-8');

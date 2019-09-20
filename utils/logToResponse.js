@@ -35,7 +35,7 @@ const isStream = require('is-stream');
  * 
  * Usage:
  * - Build a LogToResponse object.
- * - Attach this object to your winston logger with `logger.add`
+ * - Attach this object to a winston logger with `logger.add`
  * - Optionally, call `startLog` on the LogToResponse object
  * - Launch the process using the winston logger
  * - Optionally, call `endLog` on the LogToResponse object
@@ -43,18 +43,18 @@ const isStream = require('is-stream');
  * CSS classes:
  * Lines outputted in HTML mode make use of the following class names:
  * - `.log` - On the main ol/ul block
- * - `.info` - Used on the ' info' span.
- * - `.meta` - Used on the ' meta' span, if any.
+ * - `.info` - Used on the 'info' span.
+ * - `.meta` - Used on the 'meta' span, if any.
  */
 class LogToResponse extends Transport {
   /**
    * Class constructor
    * @param {object} options - An object with the following attributes:
-   * - `response`: A writable stream, usually of type `http.ServerResponse`
-   * - `html`: When `true`, log messages will be outputed in HTML format as a `li` elements.
+   * - `response`: A writable stream, usually of the type `http.ServerResponse`
+   * - `html`: When `true`, log messages will be outputed as a `li` elements in HTML format.
    * - `num`: When `true`, an HTML element of type `ol` will be used in `startLog`. Otherwise, `ul` is used.
    * - `eol`: The end-of-line string used. defaults to '\n'
-   * - `meta`: An optional array of `meta` fields that should be included in the log. Usually containing only 'timestamp'.
+   * - `meta`: An optional array of `meta` fields that should be included on the log, usually containing only 'timestamp'.
    */
   constructor({ response, html = false, num = false, eol = '\n', meta = [] }) {
     super({});
@@ -90,7 +90,7 @@ class LogToResponse extends Transport {
   }
 
   /**
-   * Writes out the HTML code needed at the beggining of log blocks.
+   * Write out the HTML code needed at the beggining of log blocks.
    */
   startLog() {
     if (this.html)
@@ -98,7 +98,7 @@ class LogToResponse extends Transport {
   }
 
   /**
-   * Writes out the HTML code needed at the end of log blocks.
+   * Write out the HTML code needed at the end of log blocks.
    */
   endLog() {
     if (this.html)
@@ -106,7 +106,9 @@ class LogToResponse extends Transport {
   }
 
 }
-
+/**
+ * Default style
+ */
 LogToResponse.CSS = `
 <style type="text/css">
 

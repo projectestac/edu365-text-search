@@ -16,7 +16,7 @@ The project was made upon the following components:
 
 ### Build the Google spreadsheet
 
-To use this app you must first create a Google Spreadsheet with a single page named "pages". This page should have a first row with the following column titles:
+To use this app you must first create a Google Spreadsheet with a sheet named "pages". This page should have the following column titles in row `A`:
 
 | Column name   | Cell content                                                                                                   | type     |
 |---------------|----------------------------------------------------------------------------------------------------------------|:--------:|
@@ -30,15 +30,15 @@ To use this app you must first create a Google Spreadsheet with a single page na
 | `url`         | Final URL of the page, usually made with a calc formula like: `="http://edu365.cat" & A2`                      | auto     |
 | `text`        | This is where the search engine stores the word list of each page                                              | auto     |
 
-The first 6 colums of this spreadsheet should be filled-in for all the pages to be indexed, one row per page.
+Fill-in the path, title and other data for all the URLs that should be indexed. The three last columns will be automatically filled and must be left blank.
 
 ### Credential settings
 
-You must obtain the __OAuth2 credentials__ from the [Google API console](https://console.developers.google.com/). These credentials should be downloaded in a file named `credentials.json` and stored on this project root folder. You should also enable the [Google Sheets API](https://developers.google.com/sheets/api/quickstart/js) for a user having read and write rights on this sheet.
+You must obtain a set of __OAuth2 credentials__ from the [Google API console](https://console.developers.google.com/). These credentials should be downloaded in a file named `credentials.json` and stored on the project root folder. You must also enable the [Google Sheets API](https://developers.google.com/sheets/api/quickstart/js) for a user having read and write rights on this sheet.
 
-The next step will be to make a duplicate of the file `.env-example` with the name `.env`.
+The next step will be to make a duplicate of the file `.env-example`, calling it `.env`.
 
-Edit `.env` and set the value of `SPREADSHEET_ID` to the identifier of your spreadsheet (the part between `/spreadsheets/d/` and `/edit` of the spreadsheet URL). You also should write a random text on `AUTH_SECRET`. Other settings like the `APP_PORT`, `LOG_LEVEL` or `LOG_FILE` are optional.
+Edit `.env` and set the value of `SPREADSHEET_ID` to the identifier of your spreadsheet (the part between `/spreadsheets/d/` and `/edit` of the spreadsheet URL). You should also write a random text on `AUTH_SECRET`. Other settings like the `APP_PORT`, `LOG_LEVEL` or `LOG_FILE` are optional.
 
 ### Build the main application
 
@@ -71,11 +71,11 @@ To perform a query, just use this URL:
 http://%HOST%:%APP_PORT%/q=%QUERY_TEXT%
 ```
 
-You will find examples of a search form and results page inside `/test`.
+You will find examples of a search form and results page in `/test`.
 
 ### Advanced settings
 
-This application uses [Fuse.js](https://fusejs.io/) by [Kiro Risk](https://kiro.me/) to perform the search queries. Fuse has a lot of specific settings that can be adjusted to fit your needs. The settings currently used by edu365-text-search are:
+This application uses [Fuse.js](https://fusejs.io/) by [Kiro Risk](https://kiro.me/) to perform search queries. Fuse has a lot of specific settings that can be adjusted to fit your needs. The settings currently used by edu365-text-search are:
 
 ```javascript
 // See file: /search/FullTextSearch.js
@@ -95,7 +95,6 @@ FullTextSearch.DEFAULT_SEARCH_OPTIONS = {
 ```
 
 Please check out [Fuse.js](https://fusejs.io/) for a full description of each option.
-
 
 
 

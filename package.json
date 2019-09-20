@@ -21,19 +21,19 @@
   ],
   "license": "EUPL-1.2",
   "dependencies": {
-    "dotenv": "^8.0.0",
+    "dotenv": "^8.1.0",
     "excel-column-name": "^1.0.0",
     "express": "^4.17.1",
     "fuse.js": "^3.4.5",
-    "googleapis": "^41.0.1",
+    "googleapis": "^43.0.0",
     "is-stream": "^2.0.0",
-    "puppeteer": "^1.18.1",
+    "puppeteer": "^1.20.0",
     "sorted-array": "^2.0.4",
     "winston": "^3.2.1",
     "winston-transport": "^4.3.0",
-    "lodash": ">=4.17.14"
+    "lodash": ">=4.17.15"
   },
   "devDependencies": {
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.2"
   }
 }

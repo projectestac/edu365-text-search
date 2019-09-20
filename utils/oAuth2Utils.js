@@ -32,22 +32,22 @@ const readline = require('readline');
 const { google } = require('googleapis');
 
 /**
- * Creates an OAuth2 client with the given credentials
+ * Create an OAuth2 client with the given credentials
  * @param {object} credentials - The authorization client credentials.
  * @param {string} tokenPath - Path of the file where the auth token should be found (or otherwise created)
  * @returns {google.auth.OAuth2} - The resulting oAuth2Client
  */
 async function authorize(credentials, tokenPath, scope, logger) {
   const { client_secret, client_id, redirect_uris } = credentials.installed;
-  logger.verbose( 'Building OAuth2 client');
+  logger.verbose('Building OAuth2 client');
   const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
   let token = null;
   if (fs.existsSync(tokenPath)) {
-    logger.verbose( 'Reusing the OAuth2 token found in %s', tokenPath);
+    logger.verbose('Reusing the OAuth2 token found in %s', tokenPath);
     token = JSON.parse(await readFile(tokenPath));
   } else {
-    logger.verbose( 'No previous OAuth2 token found. Creating a new one.');
+    logger.verbose('No previous OAuth2 token found. Creating a new one.');
     token = await getNewToken(oAuth2Client, tokenPath, scope);
   }
 
@@ -56,29 +56,29 @@ async function authorize(credentials, tokenPath, scope, logger) {
 }
 
 /**
- * Get a new token after prompting for user authorization, and store in a JSON file
- * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
+ * Get a new token after prompting for user authorization, and store it in a JSON file
+ * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for
  * @param {string} tokenPath - Path of the file where the auth token should be found (or otherwise created)
  * @returns {object} token - The resulting token
  */
 async function getNewToken(oAuth2Client, tokenPath, scope, logger) {
-  logger.verbose( 'Generating the authorization URL');
+  logger.verbose('Generating the authorization URL');
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: scope,
   });
-  logger.verbose( 'Asking user for Google\'s code');
+  logger.verbose('Asking user for Google\'s code');
   console.log('Authorize this app by visiting this url:', authUrl);
   const code = await readOneLine('Enter the code from that page here: ');
-  logger.verbose( 'Getting the new token');
+  logger.verbose('Getting the new token');
   const token = await oAuth2GetToken(oAuth2Client, code);
   await writeFile(tokenPath, JSON.stringify(token));
-  logger.verbose( 'New token stored in %s', tokenPath);
+  logger.verbose('New token stored in %s', tokenPath);
   return token;
 }
 
 /**
- * Reads one line of text from stdin 
+ * Read one line of text from stdin 
  * @param {string} prompt - The prompt phrase
  */
 async function readOneLine(prompt) {
@@ -98,7 +98,7 @@ async function readOneLine(prompt) {
 }
 
 /**
- * Gets an authorization token from Google API services
+ * Get an authorization token from the Google API services
  * @param {google.auth.OAuth2} oAuth2Client - The oAuth2Client object
  * @param {string} code - The code obtained from a given auth URL
  * @returns {Object} - The auth token
@@ -114,16 +114,16 @@ async function oAuth2GetToken(oAuth2Client, code) {
 }
 
 /**
- * Gets or creates an OAuth2 client with the given credentials and token
- * @param {object} credentialsPath - Path of the file with the authorization client credentials.
+ * Get or create an OAuth2 client with the given credentials and token
+ * @param {object} credentialsPath - Path of the file with the authorization client credentials
  * @param {string} tokenPath - Path of the file where the auth token should be found (or otherwise created)
  * @param {string[]} scope - Array of API scopes for wich this credentials are requested
  * @returns {google.auth.OAuth2} - The resulting oAuth2Client
  */
 async function getOauth2Client(credentialsPath, tokenPath, scope, logger) {
-  logger.verbose( 'Reading %s', credentialsPath);
+  logger.verbose('Reading %s', credentialsPath);
   const credentials = JSON.parse(await readFile(credentialsPath));
-  logger.info( 'Getting the OAuth2 client');
+  logger.info('Getting the OAuth2 client');
   const oAuth2Client = await authorize(credentials, tokenPath, scope, logger);
   return oAuth2Client;
 }
