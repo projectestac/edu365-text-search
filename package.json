@@ -1,6 +1,6 @@
 {
   "name": "edu365-text-search",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Full text search engine for edu365.cat",
   "main": "index.js",
   "private": true,
