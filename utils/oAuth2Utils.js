@@ -38,21 +38,21 @@ const { google } = require('googleapis');
  * @returns {google.auth.OAuth2} - The resulting oAuth2Client
  */
 async function authorize(credentials, tokenPath, scope, logger) {
-  const { client_secret, client_id, redirect_uris } = credentials.installed;
-  logger.verbose('Building OAuth2 client');
-  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
+    const { client_secret, client_id, redirect_uris } = credentials.installed;
+    logger.verbose('Building OAuth2 client');
+    const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
-  let token = null;
-  if (fs.existsSync(tokenPath)) {
-    logger.verbose('Reusing the OAuth2 token found in %s', tokenPath);
-    token = JSON.parse(await readFile(tokenPath));
-  } else {
-    logger.verbose('No previous OAuth2 token found. Creating a new one.');
-    token = await getNewToken(oAuth2Client, tokenPath, scope);
-  }
+    let token = null;
+    if (fs.existsSync(tokenPath)) {
+        logger.verbose('Reusing the OAuth2 token found in %s', tokenPath);
+        token = JSON.parse(await readFile(tokenPath));
+    } else {
+        logger.verbose('No previous OAuth2 token found. Creating a new one.');
+        token = await getNewToken(oAuth2Client, tokenPath, scope, logger);
+    }
 
-  oAuth2Client.setCredentials(token);
-  return oAuth2Client;
+    oAuth2Client.setCredentials(token);
+    return oAuth2Client;
 }
 
 /**
@@ -62,19 +62,19 @@ async function authorize(credentials, tokenPath, scope, logger) {
  * @returns {object} token - The resulting token
  */
 async function getNewToken(oAuth2Client, tokenPath, scope, logger) {
-  logger.verbose('Generating the authorization URL');
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: scope,
-  });
-  logger.verbose('Asking user for Google\'s code');
-  console.log('Authorize this app by visiting this url:', authUrl);
-  const code = await readOneLine('Enter the code from that page here: ');
-  logger.verbose('Getting the new token');
-  const token = await oAuth2GetToken(oAuth2Client, code);
-  await writeFile(tokenPath, JSON.stringify(token));
-  logger.verbose('New token stored in %s', tokenPath);
-  return token;
+    logger.verbose('Generating the authorization URL');
+    const authUrl = oAuth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: scope,
+    });
+    logger.verbose('Asking user for Google\'s code');
+    console.log('Authorize this app by visiting this url:', authUrl);
+    const code = await readOneLine('Enter the code from that page here: ');
+    logger.verbose('Getting the new token');
+    const token = await oAuth2GetToken(oAuth2Client, code);
+    await writeFile(tokenPath, JSON.stringify(token));
+    logger.verbose('New token stored in %s', tokenPath);
+    return token;
 }
 
 /**
@@ -82,19 +82,19 @@ async function getNewToken(oAuth2Client, tokenPath, scope, logger) {
  * @param {string} prompt - The prompt phrase
  */
 async function readOneLine(prompt) {
-  return new Promise((resolve, reject) => {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
+    return new Promise((resolve, reject) => {
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+        });
+        rl.question(prompt, response => {
+            rl.close();
+            if (!response)
+                reject('No answer to a question posed!');
+            else
+                resolve(response);
+        });
     });
-    rl.question(prompt, response => {
-      rl.close();
-      if (!response)
-        reject('No answer to a question posed!');
-      else
-        resolve(response);
-    });
-  });
 }
 
 /**
@@ -104,13 +104,13 @@ async function readOneLine(prompt) {
  * @returns {Object} - The auth token
  */
 async function oAuth2GetToken(oAuth2Client, code) {
-  return new Promise(function (resolve, reject) {
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err)
-        reject(err);
-      resolve(token);
+    return new Promise(function(resolve, reject) {
+        oAuth2Client.getToken(code, (err, token) => {
+            if (err)
+                reject(err);
+            resolve(token);
+        });
     });
-  });
 }
 
 /**
@@ -121,14 +121,14 @@ async function oAuth2GetToken(oAuth2Client, code) {
  * @returns {google.auth.OAuth2} - The resulting oAuth2Client
  */
 async function getOauth2Client(credentialsPath, tokenPath, scope, logger) {
-  logger.verbose('Reading %s', credentialsPath);
-  const credentials = JSON.parse(await readFile(credentialsPath));
-  logger.info('Getting the OAuth2 client');
-  const oAuth2Client = await authorize(credentials, tokenPath, scope, logger);
-  return oAuth2Client;
+    logger.verbose('Reading %s', credentialsPath);
+    const credentials = JSON.parse(await readFile(credentialsPath));
+    logger.info('Getting the OAuth2 client');
+    const oAuth2Client = await authorize(credentials, tokenPath, scope, logger);
+    return oAuth2Client;
 }
 
 module.exports = {
-  getOauth2Client,
-  readOneLine,
+    getOauth2Client,
+    readOneLine,
 };
