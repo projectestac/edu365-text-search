@@ -67,7 +67,8 @@ async function checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHE
   const pages = rows.filter(p => p._updated);
   logger.info(`%d page(s) should be updated`, pages.length);
 
-  await checkPages(pages, BASE_URL, logger);
+  const pages_to_check = pages.filter(p => !p._external);
+  await checkPages(pages_to_check, BASE_URL, logger);
 
   await updateEtags(auth, SPREADSHEET_ID, SPREADSHEET_PAGE, keys, pages, logger);
   logger.info('%d page(s) have been updated', pages.length);
@@ -125,10 +126,25 @@ async function getSitePages(auth, spreadsheetId, page, root, logger) {
   const { keys, rows } = await getSheetData(auth, spreadsheetId, page, true);
 
   await rows.filter(row => row.enabled).asyncForEach(async row => {
-    const url = `${root}${row.path}`;
+    // Let's set a fake etag for external pages as may not be provided
+    let url = row.path;
+    let etag = 'fake-etag-for-external-page';
+    row._updated = true;
+    row._external = true;
+
+    // Normaliza internal urls
+    if (url.startsWith('/')) {
+      url = `${root}${row.path}`;
+    }
+
+    // Check etags only for internal urls
+    if (url.startsWith(root)) {
+      row._external = false;
     logger.info('Getting the "etag" of %s', url);
-    const etag = await getEtagHeader(url);
+      etag = await getEtagHeader(url);
     row._updated = row.etag && row.etag === etag ? false : true;
+    }
+
     if (row._updated) {
       logger.info('This page should be updated: %s', url);
       row.etag = etag;

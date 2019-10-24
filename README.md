@@ -20,14 +20,14 @@ To use this app you must first create a Google Spreadsheet with a sheet named "p
 
 | Column name   | Cell content                                                                                                   | type     |
 |---------------|----------------------------------------------------------------------------------------------------------------|:--------:|
-| `path`        | Relative path to each page on the site                                                                         | manual   |
+| `path`        | Either the absolute url or the path relative to the BASE_URL environment variable                                                                         | manual   |
 | `title`       | The page title                                                                                                 | manual   |
 | `descriptors` | Optional descriptors for each page, separed by blank spaces                                                    | manual   |
 | `lang`        | ISO 639-1 language code of the page (currently not used)                                                       | manual   |
 | `js`          | A true/false switch indicating if the page needs to execute JavaScript to build its final content              | manual   |
 | `enabled`     | Another true/false switch, used to exclude specific pages from the search                                      | manual   |
 | `etag`        | This is where the indexer stores the current [HTTP ETag](https://en.wikipedia.org/wiki/HTTP_ETag) of each page | auto     |
-| `url`         | Final URL of the page, usually made with a calc formula like: `="http://edu365.cat" & A2`                      | auto     |
+| `url`         | Final absolute URL of the page, usually made with a calc formula like: `="http://edu365.cat" & path` if path is a relative url or just `path` if it is already absolute.                       | auto     |
 | `text`        | This is where the search engine stores the word list of each page                                              | auto     |
 
 Fill-in the path, title and other data for all the URLs that should be indexed. The three last columns will be automatically filled and must be left blank.
