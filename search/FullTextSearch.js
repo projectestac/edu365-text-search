@@ -38,8 +38,7 @@ class FullTextSearch {
    */
   constructor(siteData, fuseOptions = FullTextSearch.DEFAULT_SEARCH_OPTIONS) {
     this.fuse = new Fuse(
-      siteData,
-      { ...fuseOptions, keys: ['text', 'title', 'descriptors'] }
+      siteData, {...fuseOptions, keys: ['title', 'descriptors'] }
     );
   }
 
