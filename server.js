@@ -128,7 +128,7 @@ app.get('/', (req, res) => {
 
   // Perform the query and collect only URL, title and language for each result:
   const result = (q && searchEngine ? searchEngine.search(q) : [])
-    .map(({ url, title, lang }) => ({ url, title, lang }));
+    .map(({ url, title }) => ({ url, title }));
 
   logger.info(`Query "${q}" from ${ip} returned ${result.length} results`);
   res.append('Access-Control-Allow-Origin', '*');
