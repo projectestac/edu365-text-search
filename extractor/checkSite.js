@@ -44,7 +44,7 @@ Array.prototype.asyncForEach = async function (fn) {
  * @param {String} TOKEN_PATH - File with the token provided by the Google APIs when authorized for first time
  * @param {String} SPREADSHEET_ID - The Google spreadsheet ID
  * @param {String} SPREADSHEET_PAGE - The sheet name
- * @param {String[]} SCOPE - Array of API scopes for wich this credentials are requested 
+ * @param {String[]} SCOPE - Array of API scopes for wich this credentials are requested
  * @param {String} BASE_URL - Base used to build the full URLs adding `path`
  * @param {Object} logger - A Winston object
  * @returns {Object[]} - An array with the content of the sheet rows.
@@ -82,11 +82,12 @@ async function checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHE
  * @param {String} TOKEN_PATH - File with the token provided by the Google APIs when authorized for first time
  * @param {String} SPREADSHEET_ID - The Google spreadsheet ID
  * @param {String} SPREADSHEET_PAGE - The sheet name
- * @param {String[]} SCOPE - Array of API scopes for wich this credentials are requested 
+ * @param {String[]} SCOPE - Array of API scopes for wich this credentials are requested
+ * @param {String} BASE_URL - Base used to build the full URLs adding `path`
  * @param {Object} logger - A Winston object
  * @returns - An array of page info objects
  */
-async function getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, logger) {
+async function getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger) {
 
   if (!CREDENTIALS_PATH)
     throw new Error('Path to credentials file not set!');
@@ -99,13 +100,16 @@ async function getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREA
   logger.info('Getting the list of site pages from Google spreadsheet');
   const { rows } = await getSheetData(auth, SPREADSHEET_ID, SPREADSHEET_PAGE, true);
 
-  const result = rows.filter(p => p.enabled && p.url && p.text).map(p => ({
-    url: p.url,
-    title: p.title || p.url,
-    descriptors: p.descriptors || '',
-    lang: p.lang,
-    text: p.text,
-  }));
+  const result = rows.filter(p => p.enabled && p.path).map(function (p) {
+    const url = normalize_path(p.path, BASE_URL)
+    return {
+      url: url,
+      title: p.title || url,
+      descriptors: p.descriptors || '',
+      lang: p.lang,
+      text: p.text,
+    }
+  });
 
   logger.info('%d page(s) available for full-text search', result.length);
 
@@ -113,12 +117,21 @@ async function getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREA
 }
 
 /**
- * 
+ * @param {String} path - Either an absolute url, or a relative url to the base_url
+ * @param {String} base_url - Base used to build the full URLs adding `path`
+ * @returns - Either the url if it is absolute, or the corresponding absolute version if it is relative
+ */
+function normalize_path(path, base_url) {
+  return path.startsWith('/') ? `${base_url}${path}` : path;
+};
+
+/**
+ *
  * @param {Object} auth - A valid OAuth2 object
- * @param {*} spreadsheetId 
- * @param {*} page 
- * @param {*} root 
- * @param {*} logger 
+ * @param {*} spreadsheetId
+ * @param {*} page
+ * @param {*} root
+ * @param {*} logger
  */
 async function getSitePages(auth, spreadsheetId, page, root, logger) {
 
@@ -133,16 +146,14 @@ async function getSitePages(auth, spreadsheetId, page, root, logger) {
     row._external = true;
 
     // Normaliza internal urls
-    if (url.startsWith('/')) {
-      url = `${root}${row.path}`;
-    }
+    url = normalize_path(url, root)
 
     // Check etags only for internal urls
     if (url.startsWith(root)) {
       row._external = false;
-    logger.info('Getting the "etag" of %s', url);
+      logger.info('Getting the "etag" of %s', url);
       etag = await getEtagHeader(url);
-    row._updated = row.etag && row.etag === etag ? false : true;
+      row._updated = row.etag && row.etag === etag ? false : true;
     }
 
     if (row._updated) {

@@ -123,8 +123,93 @@ async function updateSingleCell(auth, spreadsheetId, page, col, row, value) {
   });
 }
 
+/**
+ * Returns title and url of a spreadsheet
+ * @param {google.auth.OAuth2} auth - A valid OAuth2 object
+ * @param {string} spreadsheetId - Spreadsheet ID
+ *
+ * @returns {{title: string, url: string}} - Object containign the title and the url of the spreedsheet
+ */
+async function getSpreadSheetTitleAndUrl(auth, spreadsheetId) {
+  return new Promise(function (resolve, reject) {
+    const sheets = google.sheets({ version: 'v4', auth });
+    sheets.spreadsheets.get({
+      spreadsheetId,
+      ranges: [],
+      includeGridData: false
+    },(err, res) => {
+      if (err)
+        reject(err);
+      resolve({
+        title: res.data.properties.title,
+        url: res.data.spreadsheetUrl
+      });
+    }
+    )
+  });
+}
+
+/**
+ * Deletes the data in the 'range' of the spreadsheet
+ * @param {google.auth.OAuth2} auth - A valid OAuth2 object
+ * @param {string} spreadsheetId - Spreadsheet ID
+ * @param {string} range - Sheet name or range in 'A1' format to delete
+ *
+ * @returns {{spreadsheetId: string, clearedRange: string}} - Object containign the spreadsheetId and the range cleared
+ */
+async function cleanSpreadSheetData(auth, spreadsheetId, range) {
+  return new Promise(function (resolve, reject) {
+    const sheets = google.sheets({ version: 'v4', auth });
+    sheets.spreadsheets.values.clear({
+      spreadsheetId,
+      range: range
+    },(err, res) => {
+      if (err)
+        reject(err);
+      resolve({
+        spreadsheetId: res.data.spreadsheetId,
+        clearedRange: res.data.clearedRange
+      });
+    }
+    )
+  });
+}
+
+/**
+ * Write an array of rows on a page of a Google spreadsheet
+ * @param {google.auth.OAuth2} auth - A valid OAuth2 object
+ * @param {string} spreadsheetId - Spreadsheet ID
+ * @param {string} page - Sheet name
+ * @param {string[][]} data - Array of arrays with the data of each cell to write on
+ * @param {number} [rowIndex=1] - Starting row number (one-based index)
+ */
+async function writeRows(auth, spreadsheetId, page, data, rowIndex = 1) {
+  return new Promise(function (resolve, reject) {
+    const sheets = google.sheets({ version: 'v4', auth });
+    const range = `${page}!${rowIndex}:${rowIndex + data.length}`;
+    sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: range,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        range,
+        "majorDimension": "ROWS",
+        values: data,
+      },
+    },(err, res) => {
+      if (err)
+        reject(err);
+      resolve(res);
+    }
+    )
+  });
+}
+
 module.exports = {
   getRawSpreadsheetData,
   getSheetData,
   updateSingleCell,
+  getSpreadSheetTitleAndUrl,
+  cleanSpreadSheetData,
+  writeRows,
 };

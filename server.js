@@ -6,10 +6,13 @@ const FulltextSearch = require('./search/FullTextSearch');
 const { createLogger, format, transports } = require('winston');
 const LogToResponse = require('./utils/logToResponse');
 const { checkSite, getSearchData } = require('./extractor/checkSite');
+const { generateMap } = require('./extractor/mapGenerator').default;
 
 const CREDENTIALS_PATH = process.env.CREDENTIALS_PATH;
 const TOKEN_PATH = process.env.TOKEN_PATH;
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
+const EDU_MAP_SPREADSHEET_ID = process.env.EDU_MAP_SPREADSHEET_ID;
+const AUTO_SPREADSHEET_ID = process.env.AUTO_SPREADSHEET_ID;
 const SPREADSHEET_PAGE = process.env.SPREADSHEET_PAGE;
 const SCOPE = ['https://www.googleapis.com/auth/spreadsheets'];
 const BASE_URL = process.env.BASE_URL;
@@ -44,7 +47,7 @@ let searchEngine = null;
 // Prepare the full-text search engine
 async function buildSearchEngine() {
   logger.info('Building the search engine');
-  const siteData = await getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, logger);
+  const siteData = await getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
   searchEngine = new FulltextSearch(siteData);
   logger.info(`Search engine ready with ${siteData.length} pages indexed.`);
 };
@@ -52,6 +55,43 @@ async function buildSearchEngine() {
 // The main app
 const app = express();
 
+// Re-scan the entire site, updating data on the Google spreadsheet
+app.get('/build-index-page', async (req, res, next) => {
+
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  logger.info(`/build-index-page called from ${ip}`);
+
+  const logtr = new LogToResponse({ response: res, html: true, num: false, eol: '\n', meta: ['timestamp'] });
+  logger.add(logtr);
+
+  try {
+    if (AUTH_SECRET !== req.query.auth)
+      throw new Error('Invalid request!');
+
+    res.append('content-type', 'text/html; charset=utf-8');
+    res.flushHeaders();
+    res.write(`<html>\n<head>\n${LogToResponse.CSS}\n</head>\n<body>\n`);
+    logtr.startLog(true);
+
+    await generateMap(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, EDU_MAP_SPREADSHEET_ID, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger)
+
+    // This is the real job: check the site for updated pages and reload strings on the search engine
+    // const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
+    // await buildSearchEngine();
+    // ----
+
+    logtr.endLog();
+    // res.write(`<p>${rows.length} pages have been processed</p>\n`);
+    res.write('</body>\n</html>');
+    res.end();
+
+  } catch (err) {
+    next(err.toString());
+  } finally {
+    logger.remove(logtr);
+  }
+
+});
 // Re-scan the entire site, updating data on the Google spreadsheet
 app.get('/build-index', async (req, res, next) => {
 
