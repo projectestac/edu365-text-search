@@ -6,7 +6,7 @@ const FulltextSearch = require('./search/FullTextSearch');
 const { createLogger, format, transports } = require('winston');
 const LogToResponse = require('./utils/logToResponse');
 const { checkSite, getSearchData } = require('./extractor/checkSite');
-const { generateMap } = require('./extractor/mapGenerator').default;
+const { generateMap } = require('./extractor/mapGenerator');
 
 const CREDENTIALS_PATH = process.env.CREDENTIALS_PATH;
 const TOKEN_PATH = process.env.TOKEN_PATH;
@@ -47,7 +47,8 @@ let searchEngine = null;
 // Prepare the full-text search engine
 async function buildSearchEngine() {
   logger.info('Building the search engine');
-  const siteData = await getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
+  // const siteData = await getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
+  const siteData = await getSearchData(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
   searchEngine = new FulltextSearch(siteData);
   logger.info(`Search engine ready with ${siteData.length} pages indexed.`);
 };
@@ -168,7 +169,7 @@ app.get('/', (req, res) => {
 
   // Perform the query and collect only URL, title and language for each result:
   const result = (q && searchEngine ? searchEngine.search(q) : [])
-    .map(({ url, title }) => ({ url, title }));
+    .map(({ Etapa, Area, Activitat, Descriptors, Url }) => ({ Etapa, Area, Activitat, Descriptors, Url }));
 
   logger.info(`Query "${q}" from ${ip} returned ${result.length} results`);
   res.append('Access-Control-Allow-Origin', '*');

@@ -100,17 +100,20 @@ async function getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREA
   logger.info('Getting the list of site pages from Google spreadsheet');
   const { rows } = await getSheetData(auth, SPREADSHEET_ID, SPREADSHEET_PAGE, true);
 
-  const result = rows.filter(p => p.enabled && p.path).map(function (p) {
-    const url = normalize_path(p.path, BASE_URL)
-    return {
-      url: url,
-      title: p.title || url,
-      descriptors: p.descriptors || '',
-      lang: p.lang,
-      text: p.text,
-    }
-  });
+  // const result = rows.filter(p => p.enabled && p.path).ap(function (p) {
+  // const result = rows.map(function (p) {
+    // const url = normalize_path(p.path, BASE_URL)
+  //   return {
+  //     Url: p.Url,
+  //     Activitat: p.Activitat || '',
+  //     Area: p.Area || '',
+  //     Descriptors: p.Descriptors || '',
+  //     Etapa: p.Etapa || '',
+  //     // text: p.text,
+  //   }
+  // });
 
+  const result = rows
   logger.info('%d page(s) available for full-text search', result.length);
 
   return result;
