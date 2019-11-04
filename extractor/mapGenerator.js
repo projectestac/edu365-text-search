@@ -61,7 +61,7 @@ async function generateMap(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, ED
   // Post-proccess extracted data
   let totalRows = []
   const headersRow = ['Url', 'Activitat', 'Area', 'Descriptors'];
-  totalRows.push([...headersRow, 'Etapa'])  // Add Etapa
+  totalRows.push([...headersRow, 'Etapa'])  // Add 'Etapa' header
 
   for (let i = 0; i < sheetsData.length; i++) {
     logger.info(`Proccessing source page: ${sourcePages[i]}`)
@@ -70,7 +70,7 @@ async function generateMap(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, ED
     rows.forEach(r => {
       let row = []
       headersRow.forEach(h => row.push((r[h] || '').trim()))
-      row.push(sourcePages[i])  // Add Etapa
+      row.push(sourcePages[i])  // Add 'Etapa' value
       totalRows.push(row)
     })
     logger.info(`Found ${rows.length} items`)
