@@ -50,7 +50,7 @@ async function generateMap(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, ED
   logger.info('Cleaning DESTINATION spreedsheet');
 
   // Extract EDU_MAP_SPREADSHEET_ID spreadsheet pages data.
-  const sourcePages = ['INFANTIL', 'PRIMÀRIA', 'ESO', 'BATXILLERAT']
+  const sourcePages = ['INFANTIL', 'PRIMÀRIA', 'ESO', 'BATXILLERAT', 'TRANSVERSALS']
   logger.info(`Getting source pages: ${sourcePages}`)
   let getSheetDataPromises = []
   sourcePages.forEach(page => {
