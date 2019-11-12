@@ -61,9 +61,9 @@ FullTextSearch.DEFAULT_SEARCH_OPTIONS = {
   matchAllTokens: true,
   includeScore: false,
   includeMatches: false,
-  threshold: 0.2,
+  threshold: 0.3,
   location: 0,
-  distance: 4,
+  distance: 3,
   maxPatternLength: 32,
   minMatchCharLength: 2,
 };
