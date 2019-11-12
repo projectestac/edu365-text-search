@@ -78,7 +78,7 @@ app.get('/build-index-page', async (req, res, next) => {
 
     // This is the real job: check the site for updated pages and reload strings on the search engine
     // const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
-    // await buildSearchEngine();
+    await buildSearchEngine();
     // ----
 
     logtr.endLog();
