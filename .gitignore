@@ -68,3 +68,5 @@ data*.json
 # Express session store
 /sessions
 
+# VSCode config
+.vscode/
