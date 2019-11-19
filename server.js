@@ -75,9 +75,10 @@ app.get('/build-index-page', async (req, res, next) => {
     logtr.startLog(true);
 
     await generateMap(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, EDU_MAP_SPREADSHEET_ID, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger)
-
+    logger.info('--------------------------------------------------------------')
     // This is the real job: check the site for updated pages and reload strings on the search engine
     // const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
+
     await buildSearchEngine();
     // ----
 
