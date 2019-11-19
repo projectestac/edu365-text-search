@@ -43,12 +43,6 @@ async function generateMap(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, ED
   logger.info(`DESTINATION: ${dest.title}`);
   logger.verbose(`${dest.url}`);
 
-  // TODO: Backup destination page before cleaning it
-
-  // Clean AUTO_SPREADSHEET_ID SPREADSHEET_PAGE
-  let r = await gs.cleanSpreadSheetData(auth, AUTO_SPREADSHEET_ID, SPREADSHEET_PAGE);
-  logger.info('Cleaning DESTINATION spreedsheet');
-
   // Extract EDU_MAP_SPREADSHEET_ID spreadsheet pages data.
   const sourcePages = ['INFANTIL', 'PRIMÀRIA', 'ESO', 'BATXILLERAT', 'TRANSVERSALS']
   logger.info(`Getting source pages: ${sourcePages}`)
@@ -76,7 +70,13 @@ async function generateMap(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, ED
     logger.info(`Found ${rows.length} items`)
   }
 
+  // TODO: Backup destination page before cleaning it
+  // Clean AUTO_SPREADSHEET_ID SPREADSHEET_PAGE
+  logger.info('Cleaning DESTINATION spreedsheet');
+  let r = await gs.cleanSpreadSheetData(auth, AUTO_SPREADSHEET_ID, SPREADSHEET_PAGE);
+
   // Write data into AUTO_SPREADSHEET_ID SPREADSHEET_PAGE
+  logger.info('Writing data in DESTINATION spreedsheet');
   await gs.writeRows(auth, AUTO_SPREADSHEET_ID, SPREADSHEET_PAGE, totalRows)
 
   const endTime = new Date().getTime()
