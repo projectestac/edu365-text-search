@@ -81,7 +81,7 @@ async function generateMap(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, ED
 
   const endTime = new Date().getTime()
   const elapsedSecs = (endTime - startTime) / 1000;
-  logger.info(`EDU365 map creation finished - ${totalRows.length} items proccessed in ${elapsedSecs} secs.`)
+  logger.info(`EDU365 map creation finished - ${totalRows.length - 1} items proccessed in ${elapsedSecs} secs.`)
 }
 
 module.exports = {
