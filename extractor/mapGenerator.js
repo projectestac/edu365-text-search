@@ -66,7 +66,7 @@ async function generateMap(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, ED
   for (let i = 0; i < sheetsData.length; i++) {
     logger.info(`Proccessing source page: ${sourcePages[i]}`)
     rows = sheetsData[i].rows
-    rows = rows.filter(r => r.Activitat.trim() && r.Url.trim())
+    rows = rows.filter(r => r.Activitat && r.Activitat.trim() && r.Url && r.Url.trim())
     rows.forEach(r => {
       let row = []
       headersRow.forEach(h => row.push((r[h] || '').trim()))
