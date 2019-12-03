@@ -190,7 +190,7 @@ async function writeRows(auth, spreadsheetId, page, data, rowIndex = 1) {
     sheets.spreadsheets.values.update({
       spreadsheetId,
       range: range,
-      valueInputOption: 'USER_ENTERED',
+      valueInputOption: 'RAW',
       resource: {
         range,
         "majorDimension": "ROWS",
