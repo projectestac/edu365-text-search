@@ -70,3 +70,6 @@ data*.json
 
 # VSCode config
 .vscode/
+
+# DDs
+*.sqlite

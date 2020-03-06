@@ -7,6 +7,7 @@ const { createLogger, format, transports } = require('winston');
 const LogToResponse = require('./utils/logToResponse');
 const { checkSite, getSearchData } = require('./extractor/checkSite');
 const { generateMap } = require('./extractor/mapGenerator');
+const { db, initDb, SearchModel } = require('./db/models');
 
 const CREDENTIALS_PATH = process.env.CREDENTIALS_PATH;
 const TOKEN_PATH = process.env.TOKEN_PATH;
@@ -52,6 +53,9 @@ async function buildSearchEngine() {
   searchEngine = new FulltextSearch(siteData);
   logger.info(`Search engine ready with ${siteData.length} pages indexed.`);
 };
+
+// Initialize DB
+initDb(db);
 
 // The main app
 const app = express();
@@ -171,6 +175,9 @@ app.get('/', (req, res) => {
   // Perform the query and collect only URL, title and language for each result:
   const result = (q && searchEngine ? searchEngine.search(q) : [])
     .map(({ Etapa, Area, Activitat, Descriptors, Url }) => ({ Etapa, Area, Activitat, Descriptors, Url }));
+
+  // Add search to db
+  SearchModel.create({ text: q, ip: ip, num_results: result.length });
 
   logger.info(`Query "${q}" from ${ip} returned ${result.length} results`);
   res.append('Access-Control-Allow-Origin', '*');
