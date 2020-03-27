@@ -22,7 +22,7 @@
   "license": "EUPL-1.2",
   "dependencies": {
     "dotenv": "^8.2.0",
-    "excel-column-name": "^1.0.0",
+    "excel-column-name": "^1.0.1",
     "express": "^4.17.1",
     "fuse.js": "^3.4.5",
     "googleapis": "^43.0.0",
