@@ -1,34 +1,20 @@
 #!/usr/bin/env node
 
-require('dotenv').config();
 const express = require('express');
+const config = require('./config');
 const FulltextSearch = require('./search/FullTextSearch');
-const { createLogger, format, transports } = require('winston');
 const LogToResponse = require('./utils/logToResponse');
+const { createLogger, format, transports } = require('winston');
 const { checkSite, getSearchData } = require('./extractor/checkSite');
 const { generateMap } = require('./extractor/mapGenerator');
 const { db, initDb, SearchModel } = require('./db/models');
 
-const CREDENTIALS_PATH = process.env.CREDENTIALS_PATH;
-const TOKEN_PATH = process.env.TOKEN_PATH;
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const EDU_MAP_SPREADSHEET_ID = process.env.EDU_MAP_SPREADSHEET_ID;
-const AUTO_SPREADSHEET_ID = process.env.AUTO_SPREADSHEET_ID;
-const SPREADSHEET_PAGE = process.env.SPREADSHEET_PAGE;
-const SCOPE = ['https://www.googleapis.com/auth/spreadsheets'];
-const BASE_URL = process.env.BASE_URL;
-const AUTH_SECRET = process.env.AUTH_SECRET;
-const LOG_FILE = process.env.LOG_FILE;
-const LOG_CONSOLE = process.env.LOG_CONSOLE !== 'false';
-const LOG_LEVEL = process.env.LOG_LEVEL || 'debug';
-const APP_PORT = process.env.APP_PORT || 8080;
-
 // Winston transports used by the main logger
 const logTransports = [];
-if (LOG_CONSOLE)
+if (config.LOG_CONSOLE)
   logTransports.push(new transports.Console());
-if (LOG_FILE)
-  logTransports.push(new transports.File({ filename: LOG_FILE }));
+if (config.LOG_FILE)
+  logTransports.push(new transports.File({ filename: config.LOG_FILE }));
 
 // App logger
 const logger = createLogger({
@@ -37,7 +23,7 @@ const logger = createLogger({
     format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`),
   ),
-  level: LOG_LEVEL,
+  level: config.LOG_LEVEL,
   handleExceptions: true,
   transports: logTransports,
 });
@@ -49,7 +35,15 @@ let searchEngine = null;
 async function buildSearchEngine() {
   logger.info('Building the search engine');
   // const siteData = await getSearchData(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
-  const siteData = await getSearchData(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
+  const siteData = await getSearchData(
+    config.CREDENTIALS_PATH, 
+    config.TOKEN_PATH, 
+    config.AUTO_SPREADSHEET_ID, 
+    config.SPREADSHEET_PAGE, 
+    config.SCOPE, 
+    config.BASE_URL, 
+    logger
+  );
   searchEngine = new FulltextSearch(siteData);
   logger.info(`Search engine ready with ${siteData.length} pages indexed.`);
 };
@@ -70,7 +64,7 @@ app.get('/build-index-page', async (req, res, next) => {
   logger.add(logtr);
 
   try {
-    if (AUTH_SECRET !== req.query.auth)
+    if (config.AUTH_SECRET !== req.query.auth)
       throw new Error('Invalid request!');
 
     res.append('content-type', 'text/html; charset=utf-8');
@@ -78,8 +72,18 @@ app.get('/build-index-page', async (req, res, next) => {
     res.write(`<html>\n<head>\n${LogToResponse.CSS}\n</head>\n<body>\n`);
     logtr.startLog(true);
 
-    await generateMap(CREDENTIALS_PATH, TOKEN_PATH, AUTO_SPREADSHEET_ID, EDU_MAP_SPREADSHEET_ID, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger)
-    logger.info('--------------------------------------------------------------')
+    await generateMap(
+      config.CREDENTIALS_PATH, 
+      config.TOKEN_PATH, 
+      config.AUTO_SPREADSHEET_ID, 
+      config.EDU_MAP_SPREADSHEET_ID, 
+      config.SPREADSHEET_ID, 
+      config.SPREADSHEET_PAGE, 
+      config.SCOPE, 
+      config.BASE_URL, 
+      logger
+    );
+    logger.info('--------------------------------------------------------------');
     // This is the real job: check the site for updated pages and reload strings on the search engine
     // const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
 
@@ -108,7 +112,7 @@ app.get('/build-index', async (req, res, next) => {
   logger.add(logtr);
 
   try {
-    if (AUTH_SECRET !== req.query.auth)
+    if (config.AUTH_SECRET !== req.query.auth)
       throw new Error('Invalid request!');
 
     res.append('content-type', 'text/html; charset=utf-8');
@@ -117,7 +121,15 @@ app.get('/build-index', async (req, res, next) => {
     logtr.startLog(true);
 
     // This is the real job: check the site for updated pages and reload strings on the search engine
-    const rows = await checkSite(CREDENTIALS_PATH, TOKEN_PATH, SPREADSHEET_ID, SPREADSHEET_PAGE, SCOPE, BASE_URL, logger);
+    const rows = await checkSite(
+      config.CREDENTIALS_PATH, 
+      config.TOKEN_PATH, 
+      config.SPREADSHEET_ID, 
+      config.SPREADSHEET_PAGE, 
+      config.SCOPE, 
+      config.BASE_URL, 
+      logger
+    );
     await buildSearchEngine();
     // ----
 
@@ -144,7 +156,7 @@ app.get('/refresh', async (req, res, next) => {
   logger.add(logtr);
 
   try {
-    if (AUTH_SECRET !== req.query.auth)
+    if (config.AUTH_SECRET !== req.query.auth)
       throw new Error('Invalid request!');
 
     res.append('content-type', 'text/html; charset=utf-8');
@@ -192,7 +204,7 @@ app.use((err, _req, res, _next) => {
 });
 
 // Start the express server and initialize the search engine
-app.listen(APP_PORT, async () => {
+app.listen(config.APP_PORT, async () => {
   await buildSearchEngine();
-  logger.info(`App running on port ${APP_PORT}`);
+  logger.info(`App running on port ${config.APP_PORT}`);
 });
