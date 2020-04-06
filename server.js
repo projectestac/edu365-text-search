@@ -4,29 +4,13 @@ const express = require('express');
 const config = require('./config');
 const FulltextSearch = require('./search/FullTextSearch');
 const LogToResponse = require('./utils/logToResponse');
-const { createLogger, format, transports } = require('winston');
+const { newLogger } = require('./logger');
 const { checkSite, getSearchData } = require('./extractor/checkSite');
 const { generateMap } = require('./extractor/mapGenerator');
 const { db, initDb, SearchModel } = require('./db/models');
 
-// Winston transports used by the main logger
-const logTransports = [];
-if (config.LOG_CONSOLE)
-  logTransports.push(new transports.Console());
-if (config.LOG_FILE)
-  logTransports.push(new transports.File({ filename: config.LOG_FILE }));
-
 // App logger
-const logger = createLogger({
-  format: format.combine(
-    format.splat(),
-    format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`),
-  ),
-  level: config.LOG_LEVEL,
-  handleExceptions: true,
-  transports: logTransports,
-});
+const logger = newLogger(config.LOG_LEVEL, config.LOG_CONSOLE, config.LOG_FILE);
 
 // The main search engine, built at server startup
 let searchEngine = null;

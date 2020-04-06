@@ -1,22 +1,11 @@
 #!/usr/bin/env node
 
 const config = require('./config');
-const { createLogger, format, transports } = require('winston');
+const { newLogger } = require('./logger');
 const { checkSite } = require('./extractor/checkSite');
 
-const logger = createLogger({
-  format: format.combine(
-    format.splat(),
-    format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`),
-  ),
-  level: 'debug',
-  handleExceptions: true,
-  transports: [
-    new transports.File({ filename: 'log/combined.log' }),
-    new transports.Console(),
-  ],
-});
+// App logger
+const logger = newLogger('debug', true, 'log/combined.log');
 
 async function main() {
   const rows = await checkSite(
@@ -28,7 +17,7 @@ async function main() {
     config.BASE_URL, 
     logger
   );
-  console.log(`Received ${rows.length} pages!`);
+  logger.info(`Received ${rows.length} pages!`);
 }
 
 try {
