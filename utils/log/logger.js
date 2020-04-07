@@ -1,6 +1,15 @@
 const { createLogger, format, transports } = require('winston');
 
-function newLogger(logLevel, logToConsole, logFile) {
+/**
+   * Creates an app logger with proper defaults
+   * 
+   * @param {string} logLevel - Log level: 'debug', 'info', etc.
+   * @param {bool} logToConsole - Whether to log to console or not.
+   * @param {string|false} logFile - The path to the log file or false.
+   * 
+   * @returns The logger object
+   */
+function newLogger(logLevel, logToConsole, logFile = false) {
 
   const logTransports = [];
   if (logToConsole)

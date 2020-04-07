@@ -33,8 +33,12 @@ const { google } = require('googleapis');
 
 /**
  * Create an OAuth2 client with the given credentials
+ * 
  * @param {object} credentials - The authorization client credentials.
  * @param {string} tokenPath - Path of the file where the auth token should be found (or otherwise created)
+ * @param {string[]} scope - Array of API scopes for wich this credentials are requested
+ * @param {object} logger - The logger object to be used to log messages
+ * 
  * @returns {google.auth.OAuth2} - The resulting oAuth2Client
  */
 async function authorize(credentials, tokenPath, scope, logger) {
@@ -57,8 +61,12 @@ async function authorize(credentials, tokenPath, scope, logger) {
 
 /**
  * Get a new token after prompting for user authorization, and store it in a JSON file
+ * 
  * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for
  * @param {string} tokenPath - Path of the file where the auth token should be found (or otherwise created)
+ * @param {string[]} scope - Array of API scopes for wich this credentials are requested
+ * @param {object} logger - The logger object to be used to log messages
+ * 
  * @returns {object} token - The resulting token
  */
 async function getNewToken(oAuth2Client, tokenPath, scope, logger) {
@@ -115,9 +123,12 @@ async function oAuth2GetToken(oAuth2Client, code) {
 
 /**
  * Get or create an OAuth2 client with the given credentials and token
+ * 
  * @param {object} credentialsPath - Path of the file with the authorization client credentials
  * @param {string} tokenPath - Path of the file where the auth token should be found (or otherwise created)
  * @param {string[]} scope - Array of API scopes for wich this credentials are requested
+ * @param {object} logger - The logger object to be used to log messages
+ * 
  * @returns {google.auth.OAuth2} - The resulting oAuth2Client
  */
 async function getOauth2Client(credentialsPath, tokenPath, scope, logger) {
