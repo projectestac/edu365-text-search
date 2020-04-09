@@ -132,7 +132,7 @@ app.get('/', (req, res) => {
         Etapa: item.Etapa, 
         Area: item.Area, 
         Activitat: item.Activitat, 
-        // Descriptors: item.Descriptors, 
+        Descriptors: item.Descriptors, 
         Url: item.Url,
       }));
 
