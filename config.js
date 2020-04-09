@@ -48,7 +48,7 @@ let config = {
     // Fuzzy
     location: 0,
     threshold: 0.3,
-    distance: 3,
+    distance: 100,
 
     // Advanzed
     useExtendedSearch: false,
