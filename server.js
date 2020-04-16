@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 const express = require('express');
+const Sequelize = require('sequelize');
+const addDays = require('date-fns/addDays');
+
 const config = require('./config');
 const LogToResponse = require('./utils/log/logToResponse');
 const { newLogger } = require('./utils/log/logger');
@@ -144,6 +147,60 @@ app.get('/', (req, res) => {
   res.append('Access-Control-Allow-Origin', '*');
   res.append('content-type', 'application/json; charset=utf-8');
   res.end(JSON.stringify(result, null, 1));
+});
+
+// Search STATS
+app.get('/search-stats', async (req, res, next) => {
+
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  logger.info(`/search/stats called from ${ip}`);
+
+    try {
+    // Check auth
+    if (config.AUTH_SECRET !== req.query.auth)
+      throw new Error('Invalid request!');
+    
+    const pageSize = req.query.page_size || 10;
+    const page = req.query.page || 1;
+    const offset = page * pageSize - pageSize;
+    
+    let startDate;
+    if (req.query.start_date)
+      startDate = new Date(req.query.start_date);
+    else
+      startDate = new Date('1900-01-01');
+    
+    let endDate;
+    if (req.query.end_date)
+      endDate = new Date(req.query.end_date);
+    else
+      endDate = new Date();
+
+    // Add a day as time will be always 0:00
+    endDate = addDays(endDate, 1);
+
+    const Op = Sequelize.Op;
+    const result = await SearchModel.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      attributes: { exclude: ['updatedAt'] },
+      where: {
+        createdAt: {
+          [Op.gte]: startDate,
+          [Op.lt]: endDate
+        }
+      }
+    });
+    logger.info(`Number of results: ${result.count}`);  
+    res.append('content-type', 'application/json; charset=utf-8');
+    res.end(JSON.stringify(result.rows, null, 1));
+
+  } catch (err) {
+    next(err.toString());
+  } finally {
+    
+  }
+
 });
 
 // Return 500 for catched errors
