@@ -155,14 +155,17 @@ app.get('/search-stats', async (req, res, next) => {
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   logger.info(`/search/stats called from ${ip}`);
 
-    try {
+  try {
     // Check auth
     if (config.AUTH_SECRET !== req.query.auth)
       throw new Error('Invalid request!');
     
+    logger.info(req.query);
     const pageSize = req.query.page_size || 10;
     const page = req.query.page || 1;
-    const offset = page * pageSize - pageSize;
+    const offset = req.query.offset || page * pageSize - pageSize;
+    const order = req.query.order || ["createdAt", "DESC"];
+    const search = req.query.search || [];
     
     let startDate;
     if (req.query.start_date)
@@ -180,20 +183,42 @@ app.get('/search-stats', async (req, res, next) => {
     endDate = addDays(endDate, 1);
 
     const Op = Sequelize.Op;
+    
+    const filters = {
+      createdAt: {
+        [Op.gte]: startDate,
+        [Op.lt]: endDate
+      }
+    }
+
+    search.forEach(function(filter) {
+      switch (filter[0]) {
+        case 'id':
+          filters.id = { [Op.like]: `%${filter[1]}%` };
+          break;
+      }
+    })
+
+    console.log(JSON.stringify(filters));
+
+
     const result = await SearchModel.findAndCountAll({
       limit: pageSize,
       offset: offset,
       attributes: { exclude: ['updatedAt'] },
-      where: {
-        createdAt: {
-          [Op.gte]: startDate,
-          [Op.lt]: endDate
-        }
-      }
+      where: filters,
+      order: order
     });
     logger.info(`Number of results: ${result.count}`);  
     res.append('content-type', 'application/json; charset=utf-8');
-    res.end(JSON.stringify(result.rows, null, 1));
+
+    const response = {
+      draw: req.query.draw || 0,
+      recordsTotal: result.count,
+      recordsFiltered: result.count,
+      data: result.rows,
+    };
+    res.end(JSON.stringify(response, null, 1));
 
   } catch (err) {
     next(err.toString());
@@ -208,6 +233,8 @@ app.use((err, _req, res, _next) => {
   logger.error(err.toString());
   res.status(500).send(err.toString());
 });
+
+app.use(express.static('frontend'));
 
 // Start the express server and initialize the search engine
 app.listen(config.APP_PORT, async () => {
