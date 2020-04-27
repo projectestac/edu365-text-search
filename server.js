@@ -3,6 +3,7 @@
 const express = require('express');
 const Sequelize = require('sequelize');
 const addDays = require('date-fns/addDays');
+const parse = require('date-fns/parse')
 
 const config = require('./config');
 const LogToResponse = require('./utils/log/logToResponse');
@@ -190,16 +191,57 @@ app.get('/search-stats', async (req, res, next) => {
         [Op.lt]: endDate
       }
     }
+    
+    console.log(`Search: ${JSON.stringify(search)}`);
 
     search.forEach(function(filter) {
       switch (filter[0]) {
         case 'id':
           filters.id = { [Op.like]: `%${filter[1]}%` };
           break;
+        case 'text':
+          filters.text =  { [Op.like]: `%${filter[1]}%` };
+          break;
+        case 'ip':
+          filters.ip =  { [Op.like]: `%${filter[1]}%` };
+          break;
+        case 'num_results':
+          let parts = filter[1].split('-');
+          let start = parseInt(parts[0]);
+          let end = parseInt(parts[2]);
+
+          if (start || end) {
+            filters.num_results = {};
+            if (start) 
+              filters.num_results = {...filters.num_results, ...{ [Op.gte]: start }};
+            if (end)
+              filters.num_results = {...filters.num_results, ...{ [Op.lte]: end }};
+          }
+          break;
+        case 'createdAt':
+          let dateParts = filter[1].split('-');
+          let startDate = dateParts[0];
+          if (startDate)
+            startDate = parse(startDate, 'dd/MM/yyyy', new Date());
+
+          let endDate = dateParts[2];
+          if (endDate) {
+            endDate = parse(endDate, 'dd/MM/yyyy', new Date());
+            // Add a day as time will be always 0:00
+            endDate = addDays(endDate, 1);
+          }
+                    
+          if (startDate || endDate) {
+            if (startDate) 
+              filters.createdAt = {...filters.createdAt, ...{ [Op.gte]: startDate }};
+            if (endDate)
+              filters.createdAt = {...filters.createdAt, ...{ [Op.lt]: endDate }};
+          }
+          break;
       }
     })
 
-    console.log(JSON.stringify(filters));
+    console.log(`Filtros: ${JSON.stringify(filters)}`);
 
 
     const result = await SearchModel.findAndCountAll({

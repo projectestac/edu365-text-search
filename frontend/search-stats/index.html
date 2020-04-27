@@ -14,6 +14,10 @@
     <!-- Bootstrap & Datatable need jQuery JS -->
     <script defer src="https://code.jquery.com/jquery-3.5.0.min.js" integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
 
+    <!-- Bootstrap & Datatable need jQuery UI JS & CSS -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=" crossorigin="anonymous" />
+    
     <!-- Momentun JS -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
     
@@ -36,17 +40,19 @@
             <img src="http://www.edu365.cat/img/edu_logo.png" alt="Logo del Edu365">
         </a>
     </nav>
-    Hola
-    <table id="searchesTable" class="table table-striped table-bordered text-center" style="width:100%">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Texto</th>
-                <th>IP</th>
-                <th>Nº de resultados</th>
-                <th>Fecha</th>
-            </tr>            
-        </thead>       
-    </table>
+    <br />
+    <div class="container-fluid d-flex justify-content-center">
+        <table id="searchesTable" class="table table-striped table-bordered text-center">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Texto</th>
+                    <th>IP</th>
+                    <th>Nº de resultados</th>
+                    <th>Fecha</th>
+                </tr>            
+            </thead>       
+        </table>
+    </div>
 </body>
 </html>

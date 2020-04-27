@@ -1,0 +1,31 @@
+#searchesTable_wrapper {
+    width: 100%;
+}
+
+#searchesTable_paginate {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+#searchesTable_wrapper .yadcf-filter-wrapper {
+    width: 100%;
+}
+
+#searchesTable_wrapper .sorting_desc,
+#searchesTable_wrapper .sorting_asc {
+    background-color: antiquewhite;
+}
+
+#searchesTable_wrapper #yadcf-filter-wrapper--searchesTable-4 {
+    width: 100%;
+}
+
+#searchesTable_wrapper #yadcf-filter--searchesTable-from-date-4,
+#searchesTable_wrapper #yadcf-filter--searchesTable-to-date-4 {
+    width: 45%
+}
+
+#searchesTable_wrapper th:last-of-type {
+    padding-right: 55px;
+}

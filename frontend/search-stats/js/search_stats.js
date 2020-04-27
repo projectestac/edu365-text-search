@@ -21,14 +21,15 @@ function configureYadcf(dataTable) {
   yadcf.init(dataTable, [
     { column_number: 0, filter_type: "text", filter_delay: 500 },
     { column_number: 1, filter_type: "text", filter_delay: 500 },
-    { column_number: 2 },
-    { column_number: 3 },
-    { column_number: 4 },
+    { column_number: 2, filter_type: "text", filter_delay: 500 },
+    { column_number: 3, filter_type: "range_number", filter_delay: 500 },
+    { column_number: 4, filter_type: "range_date", date_format: "dd/mm/yyyy", filter_delay: 500 },
   ]);  
 } 
 
 $(document).ready(function () {
   let table = $('#searchesTable').DataTable( {
+    dom: 'lrtip',
     processing: true,
     serverSide: true,
     //stateSave: true,
@@ -52,7 +53,7 @@ $(document).ready(function () {
       }
     },
     columns: [
-      { data: "id", orderable: false },
+      { data: "id", visible: false },
       { 
         data: "text",
         render: function ( data, type, row ) {
