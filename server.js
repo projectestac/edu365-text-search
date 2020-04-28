@@ -236,15 +236,11 @@ app.get('/search-stats', async (req, res, next) => {
                         
           if (startDate || endDate) {
             if (startDate) {
-              console.log(startDate);
-              let startDate2 = zonedTimeToUtc(startDate, tz);
-              console.log(startDate2);
+              startDate = zonedTimeToUtc(startDate, tz);
               filters.createdAt = {...filters.createdAt, ...{ [Op.gte]: startDate }};
             }
             if (endDate) {
-              console.log(endDate);
               endDate = zonedTimeToUtc(endDate, tz);
-              console.log(endDate);
               filters.createdAt = {...filters.createdAt, ...{ [Op.lt]: endDate }};
             }
           }
