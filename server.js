@@ -4,7 +4,6 @@ const express = require('express');
 const Sequelize = require('sequelize');
 const addDays = require('date-fns/addDays');
 const parse = require('date-fns/parse');
-//const { zonedTimeToUtc } = require('date-fns-timezone');
 const { zonedTimeToUtc } = require('date-fns-tz');
 
 const config = require('./config');
