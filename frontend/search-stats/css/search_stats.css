@@ -2,7 +2,7 @@
     width: 100%;
 }
 
-#searchesTable_paginate {
+#searchesTable_wrapper #searchesTable_paginate {
     display: flex;
     justify-content: center;
     margin-top: 10px;
@@ -28,4 +28,9 @@
 
 #searchesTable_wrapper th:last-of-type {
     padding-right: 55px;
+}
+
+#searchesTable_wrapper input#yadcf-filter--searchesTable-1,
+#searchesTable_wrapper input#yadcf-filter--searchesTable-2 {
+    width: 80%;
 }
