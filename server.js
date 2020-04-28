@@ -3,7 +3,9 @@
 const express = require('express');
 const Sequelize = require('sequelize');
 const addDays = require('date-fns/addDays');
-const parse = require('date-fns/parse')
+const parse = require('date-fns/parse');
+//const { zonedTimeToUtc } = require('date-fns-timezone');
+const { zonedTimeToUtc } = require('date-fns-tz');
 
 const config = require('./config');
 const LogToResponse = require('./utils/log/logToResponse');
@@ -167,6 +169,7 @@ app.get('/search-stats', async (req, res, next) => {
     const offset = req.query.offset || page * pageSize - pageSize;
     const order = req.query.order || ["createdAt", "DESC"];
     const search = req.query.search || [];
+    const tz = req.query.tz || "Europe/Madrid";
     
     let startDate;
     if (req.query.start_date)
@@ -230,12 +233,20 @@ app.get('/search-stats', async (req, res, next) => {
             // Add a day as time will be always 0:00
             endDate = addDays(endDate, 1);
           }
-                    
+                        
           if (startDate || endDate) {
-            if (startDate) 
+            if (startDate) {
+              console.log(startDate);
+              let startDate2 = zonedTimeToUtc(startDate, tz);
+              console.log(startDate2);
               filters.createdAt = {...filters.createdAt, ...{ [Op.gte]: startDate }};
-            if (endDate)
+            }
+            if (endDate) {
+              console.log(endDate);
+              endDate = zonedTimeToUtc(endDate, tz);
+              console.log(endDate);
               filters.createdAt = {...filters.createdAt, ...{ [Op.lt]: endDate }};
+            }
           }
           break;
       }

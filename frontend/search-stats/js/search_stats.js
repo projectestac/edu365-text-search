@@ -35,8 +35,8 @@ $(document).ready(function () {
     //stateSave: true,
     language: { "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
     ajax: {
-      //url: 'http://localhost:8765/search-stats',
-      url: 'https://met.xtec.cat/edu365/search-stats',
+      url: 'http://localhost:8765/search-stats',
+      //url: 'https://met.xtec.cat/edu365/search-stats',
       data: function(data) {
         console.log(data);
 
@@ -46,7 +46,8 @@ $(document).ready(function () {
           page_size: data.length,
           offset: data.start,
           order: formatOrder(data.columns, data.order),
-          search: formatYadcfSearch(data.columns)
+          search: formatYadcfSearch(data.columns),
+          tz: moment.tz.guess(),
         };
         console.log(serverData);
 
