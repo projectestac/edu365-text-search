@@ -31,6 +31,12 @@
     <script defer src="//cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
     <script defer src="//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"></script>
 
+    <!-- BOOSTRAP DATEPICKER -->
+    <!-- <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha256-bqVeqGdJ7h/lYPq6xrPv/YGzMEb6dNxlfiTUHSgRCp8=" crossorigin="anonymous"></script> -->
+    <!-- <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.es.min.js" integrity="sha256-K5G+7qV0tjuHL0LlhCU0TqQKR+7QwT8MfEUe2UgpmRY=" crossorigin="anonymous"></script> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" /> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css" integrity="sha256-FAOaXTpl90/K8cXmSdsskbQN3nKYulhCpPbcFzGTWKI=" crossorigin="anonymous" /> -->
+
     <!-- Local JS & CSS -->
     <link rel="stylesheet" href="css/jquery.dataTables.yadcf.css" type="text/css" />
     <link rel="stylesheet" href="css/search_stats.css" type="text/css" />
@@ -44,20 +50,68 @@
             <img src="http://www.edu365.cat/img/edu_logo.png" alt="Logo del Edu365">
         </a>
     </nav>
+    
     <br />
     <div class="container-fluid">
-        <h2>Estadísticas del buscador</h2>
+       <div class="row">
+            <div class="col-md">
+                <div class="card" id="mostWantedCard">
+                    <a class="text-white d-block" data-toggle="collapse" href="#mostWantedTableCollapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+                        <h3 class="card-header bg-primary">
+                            Búsquedas más frecuentes
+                        </h3>
+                    </a> 
+                    <div class="collapse show" id="mostWantedTableCollapse">
+                        <div class="card-body bg-light">                            
+                            <div class="dateButtons">
+                                <button class="btn btn-primary todayButton" type="submit">Hoy</button>
+                                <button class="btn btn-primary thisWeekButtom" type="submit">Esta semana</button>
+                                <button class="btn btn-primary thisMonthButtom" type="submit">Este mes</button>
+                                <button class="btn btn-primary thisYearButtom" type="submit">Este año</button>
+                                <button class="btn btn-primary allDatesButtom" type="submit">Todo</button>
+                            </div>
+                            <!-- <div class="input-group input-daterange">
+                                <input id="from-date" type="text" class="form-control" value="07/05/2020">
+                                <div class="input-group-addon">to</div>
+                                <input id="to-date" type="text" class="form-control" value="07/05/2020">
+                            </div> -->
+                            <div class="dateFilterContainer" id="mostWantedDateFilterContainer"></div>
+
+                            <div class="d-flex justify-content-center">
+                                <table id="mostWantedTable" class="table table-striped table-bordered text-center" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Texto</th>
+                                            <th>Número de búsquedas</th>
+                                            <th>Fecha</th>
+                                        </tr>            
+                                    </thead>       
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md"></div>
+       </div>
     </div>
     <br />
     <div class="container-fluid">
-        <div class="card">
-            <a class="text-white d-block" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        <div class="card" id="searchesCard">
+            <a class="text-white d-block" data-toggle="collapse" href="#searchesTableCollapse" role="button" aria-expanded="false" aria-controls="collapseExample">
                 <h3 class="card-header bg-primary">
-                    Búsquedas
+                    Listado de todas las búsquedas
                 </h3>
             </a> 
-            <div class="collapse show" id="collapseExample">
+            <div class="collapse show" id="searchesTableCollapse">
                 <div class="card-body bg-light">
+                    <div class="dateButtons">
+                        <button class="btn btn-primary todayButton" type="submit">Hoy</button>
+                        <button class="btn btn-primary thisWeekButtom" type="submit">Esta semana</button>
+                        <button class="btn btn-primary thisMonthButtom" type="submit">Este mes</button>
+                        <button class="btn btn-primary thisYearButtom" type="submit">Este año</button>
+                        <button class="btn btn-primary allDatesButtom" type="submit">Todo</button>
+                    </div>
                     <div class="d-flex justify-content-center">
                         <table id="searchesTable" class="table table-striped table-bordered text-center" style="width: 100%;">
                             <thead>

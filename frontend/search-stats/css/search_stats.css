@@ -1,19 +1,34 @@
-#searchesTable_wrapper {
+#searchesTable_wrapper,
+#mostWantedTable_wrapper {
     width: 100%;
 }
 
-#searchesTable_wrapper #searchesTable_paginate {
+#searchesTable_paginate,
+#mostWantedTable_paginate {
     display: flex;
     justify-content: center;
     margin-top: 10px;
 }
 
-#searchesTable_wrapper .yadcf-filter-wrapper {
+#mostWantedTable_info,
+#searchesTable_info {
+    text-align: center;
+}
+.yadcf-filter-wrapper {
     width: 100%;
 }
 
-#searchesTable_wrapper .sorting_desc,
-#searchesTable_wrapper .sorting_asc {
+#yadcf-filter--mostWantedTable-0 {
+    width: 80%;
+}
+
+#yadcf-filter--mostWantedTable-from-1,
+#yadcf-filter--mostWantedTable-to-1 {
+    width: 35%;
+}
+
+.sorting_desc,
+.sorting_asc {
     background-color: antiquewhite;
 }
 
@@ -26,11 +41,29 @@
     width: 45%
 }
 
-#searchesTable_wrapper th:last-of-type {
+#searchesTable_wrapper th:last-of-type,
+#mostWantedTable_wrapper th:last-of-type {
     padding-right: 55px;
 }
 
 #searchesTable_wrapper input#yadcf-filter--searchesTable-1,
 #searchesTable_wrapper input#yadcf-filter--searchesTable-2 {
     width: 80%;
+}
+
+#mostWantedCard .dateFilterContainer {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.dateButtons {
+    text-align: center;
+}
+
+.dateButtons button {
+    margin-bottom: 15px;
+}
+
+#mostWantedCard .dateFilterContainer input {
+    width: 140px;
 }

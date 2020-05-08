@@ -1,5 +1,6 @@
 -- SQLite
-SELECT id, text, ip, num_results, COUNT(*) as Filas, createdAt
+SELECT LOWER(text) as text, num_results, COUNT(text) as Filas
 FROM `searches`
-GROUP BY `text`
-ORDER BY Filas DESC;
+GROUP BY LOWER(TRIM(text))
+ORDER BY Filas DESC
+LIMIT 100;
