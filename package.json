@@ -1,6 +1,6 @@
 {
   "name": "edu365-text-search",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Search engine for edu365.cat",
   "main": "index.js",
   "private": true,
@@ -21,20 +21,20 @@
   ],
   "license": "EUPL-1.2",
   "dependencies": {
-    "date-fns": "^2.12.0",
-    "date-fns-tz": "^1.0.10",
-    "dotenv": "^8.2.0",
+    "date-fns": "^2.22.1",
+    "date-fns-tz": "^1.1.4",
+    "dotenv": "^10.0.0",
     "excel-column-name": "^1.0.1",
     "express": "^4.17.1",
     "fuse.js": "^5.1.0",
-    "googleapis": "^48.0.0",
+    "googleapis": "^76.0.0",
     "is-stream": "^2.0.0",
-    "nodemon": "^2.0.3",
-    "sequelize": "^5.21.6",
+    "nodemon": "^2.0.7",
+    "sequelize": "^6.6.2",
     "sorted-array": "^2.0.4",
-    "sqlite3": "^4.1.1",
-    "winston": "^3.2.1",
-    "winston-transport": "^4.3.0"
+    "sqlite3": "^5.0.2",
+    "winston": "^3.3.3",
+    "winston-transport": "^4.4.0"
   },
   "devDependencies": {}
 }
