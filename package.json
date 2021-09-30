@@ -1,6 +1,6 @@
 {
   "name": "edu365-text-search",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Search engine for edu365.cat",
   "main": "index.js",
   "private": true,
@@ -27,7 +27,7 @@
     "excel-column-name": "^1.0.1",
     "express": "^4.17.1",
     "fuse.js": "^6.4.6",
-    "googleapis": "^76.0.0",
+    "googleapis": "^87.0.0",
     "is-stream": "^2.0.0",
     "nodemon": "^2.0.7",
     "sequelize": "^6.6.2",
