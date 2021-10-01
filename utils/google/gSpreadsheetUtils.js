@@ -145,7 +145,7 @@ async function getSpreadSheetTitleAndUrl(auth, spreadsheetId) {
         url: res.data.spreadsheetUrl
       });
     }
-    )
+    );
   });
 }
 
@@ -171,7 +171,7 @@ async function cleanSpreadSheetData(auth, spreadsheetId, range) {
         clearedRange: res.data.clearedRange
       });
     }
-    )
+    );
   });
 }
 
@@ -201,7 +201,7 @@ async function writeRows(auth, spreadsheetId, page, data, rowIndex = 1) {
         reject(err);
       resolve(res);
     }
-    )
+    );
   });
 }
 

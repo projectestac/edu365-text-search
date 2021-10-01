@@ -53,6 +53,6 @@ let config = {
     // Advanzed
     useExtendedSearch: false,
   },
-}
+};
 
 module.exports = Object.freeze(config);

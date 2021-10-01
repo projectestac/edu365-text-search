@@ -17,6 +17,9 @@
 * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 * or FITNESS FOR A PARTICULAR PURPOSE. See the license files for details.
 */
+
+/* global window, define, document, jQuery, NodeList, moment */
+
 /*
 * Parameters:
 *
@@ -1622,7 +1625,7 @@ if (!Object.entries) {
 										from: ""
 									};
 							} else {
-								yadcfState = {};
+								let yadcfState = {};
 								yadcfState[table_selector_jq_friendly] = [];
 								yadcfState[table_selector_jq_friendly][column_number] = {
 									from: ""
@@ -2148,7 +2151,7 @@ if (!Object.entries) {
 					min: min_val,
 					max: max_val,
 					values: [min_state_val, max_state_val],
-					create: function (event, ui) {
+					create: function (_event, _ui) {
 						rangeNumberSldierDrawTips(min_state_val, max_state_val, min_tip_id, max_tip_id, table_selector_jq_friendly, column_number);
 					},
 					slide: slideFunc,
@@ -2645,7 +2648,7 @@ if (!Object.entries) {
 					filter_match_mode = columnObj.filter_match_mode;
 
 					if (column_number === undefined) {
-						alert("You must specify column number");
+						window.alert("You must specify column number");
 						return;
 					}
 
@@ -3726,7 +3729,7 @@ if (!Object.entries) {
 				appendFilters(oTable, getOptions(table_selector_tmp), table_selector);
 				if (getOptions(table_selector_tmp)[firstFromObject(getOptions(table_selector_tmp))].cumulative_filtering === true) {
 					//when filters should be populated only from visible rows (non filtered)
-					$(document).off('search.dt', oTable.selector).on('search.dt', oTable.selector, function (e, settings, json) {
+					$(document).off('search.dt', oTable.selector).on('search.dt', oTable.selector, function (e, settings, _json) {
 						var table_selector_tmp = oTable.selector;
 						if (table_selector.indexOf(":eq") !== -1) {
 							table_selector_tmp = table_selector.substring(0, table_selector.lastIndexOf(":eq"));
@@ -3791,7 +3794,7 @@ if (!Object.entries) {
 							settings.oInstance.selector, settings);
 					}
 				});
-				$(document).off('column-reorder.dt', oTable.selector).on('column-reorder.dt', oTable.selector, function (e, settings, json) {
+				$(document).off('column-reorder.dt', oTable.selector).on('column-reorder.dt', oTable.selector, function (_e, _settings, _json) {
 					var table_selector_jq_friendly = generateTableSelectorJQFriendly2(oTable);
 					initColReorderFromEvent(table_selector_jq_friendly);
 				});
@@ -4101,7 +4104,7 @@ if (!Object.entries) {
 				}
 				break;
 			default:
-				alert('Filters Multiple Tables does not support ' + filterOptions.filter_type);
+				window.alert('Filters Multiple Tables does not support ' + filterOptions.filter_type);
 			}
 		}
 
@@ -4114,7 +4117,7 @@ if (!Object.entries) {
 					filter_reset_button_text: 'x',
 					case_insensitive: true
 				},
-				columnsObjKey,
+				// columnsObjKey,
 				columnsObj,
 				columnsArrIndex,
 				column_number_str,

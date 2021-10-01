@@ -10,7 +10,8 @@
   },
   "scripts": {
     "start": "nodemon --ignore sessions/ server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .js"
   },
   "author": "Francesc Busquets <francesc@gmail.com>",
   "licenses": [

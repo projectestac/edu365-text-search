@@ -1,4 +1,3 @@
-const config = require('../config');
 const Fuse = require('fuse.js');
 const { getOauth2Client } = require('../utils/google/oAuth2Utils');
 const { getSheetData } = require('../utils/google/gSpreadsheetUtils');
@@ -28,7 +27,7 @@ async function getSearchData(credentialsPath, tokenPath, spreadSheetId, spreadSh
   logger.info('Getting the list of site pages from Google spreadsheet');
   const { rows } = await getSheetData(auth, spreadSheetId, spreadSheetPage, true);
 
-  const result = rows
+  const result = rows;
   logger.info('%d page(s) available for full-text search', result.length);
 
   return result;
@@ -48,21 +47,21 @@ async function getSearchData(credentialsPath, tokenPath, spreadSheetId, spreadSh
  * @returns {Object} - The Search Engine object ready to be used
  */
 async function buildSearchEngine(credentialsPath, tokenPath, spreadSheetId, spreadSheetPage, scope, searchOptions, logger) {
-    logger.info('Building the search engine');
-    
-    // Read data from a Google Spreadsheet
-    const siteData = await getSearchData(
-      credentialsPath, 
-      tokenPath, 
-      spreadSheetId, 
-      spreadSheetPage, 
-      scope, 
-      logger
-    );
-    logger.info(`Search engine ready with ${siteData.length} pages indexed.`);
-    
-    // Create and return the Search Engine object
-    return new Fuse(siteData, searchOptions);
-  };
+  logger.info('Building the search engine');
 
-  module.exports = buildSearchEngine;
+  // Read data from a Google Spreadsheet
+  const siteData = await getSearchData(
+    credentialsPath,
+    tokenPath,
+    spreadSheetId,
+    spreadSheetPage,
+    scope,
+    logger
+  );
+  logger.info(`Search engine ready with ${siteData.length} pages indexed.`);
+
+  // Create and return the Search Engine object
+  return new Fuse(siteData, searchOptions);
+};
+
+module.exports = buildSearchEngine;

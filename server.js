@@ -195,7 +195,7 @@ app.get('/search-stats', async (req, res, next) => {
         [Op.gte]: startDate,
         [Op.lt]: endDate
       }
-    }
+    };
     
     console.log(`Search: ${JSON.stringify(search)}`);
 
@@ -248,7 +248,7 @@ app.get('/search-stats', async (req, res, next) => {
           }
           break;
       }
-    })
+    });
 
     console.log(`Filtros: ${JSON.stringify(filters)}`);
 
@@ -319,7 +319,7 @@ app.get('/stats/most-wanted', async (req, res, next) => {
         [Op.gte]: startDate,
         [Op.lt]: endDate
       }
-    }
+    };
     const having = [];
     
     console.log(`Search: ${JSON.stringify(search)}`);
@@ -368,7 +368,7 @@ app.get('/stats/most-wanted', async (req, res, next) => {
           }
           break;
       }
-    })
+    });
 
     console.log(`Filtros: ${JSON.stringify(filters)}`);
     console.log(`Orden: ${JSON.stringify(order)}`);
