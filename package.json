@@ -32,9 +32,8 @@
     "nodemon": "^2.0.13",
     "sequelize": "^6.6.5",
     "sorted-array": "^2.0.4",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "^4.2.0",
     "winston": "^3.3.3",
     "winston-transport": "^4.4.0"
-  },
-  "devDependencies": {}
+  }
 }
