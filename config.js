@@ -50,9 +50,12 @@ let config = {
     threshold: 0.3,
     distance: 100,
 
-    // Advanzed
+    // Advanced
     useExtendedSearch: false,
   },
+
+  // Max length allowed in queries
+  QUERY_MAX_LENGTH: 128,
 };
 
 module.exports = Object.freeze(config);

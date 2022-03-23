@@ -42,7 +42,7 @@ const app = express();
 // Generates the Google spreadsheet and creates the Search Engine
 app.get('/build-index-page', async (req, res, next) => {
 
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   logger.info(`/build-index-page called from ${ip}`);
 
   const logtr = new LogToResponse({ response: res, html: true, num: false, eol: '\n', meta: ['timestamp'] });
@@ -91,7 +91,7 @@ app.get('/build-index-page', async (req, res, next) => {
 // Creates/Updates the Search Engine without regenerating the Google spreadsheet
 app.get('/refresh', async (req, res, next) => {
 
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   logger.info(`/refresh called from ${ip}`);
 
   const logtr = new LogToResponse({ response: res, html: true, num: false, eol: '\n', meta: ['timestamp'] });
@@ -127,11 +127,11 @@ app.get('/refresh', async (req, res, next) => {
 
 // Perform a search
 app.get('/', (req, res) => {
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   let q = req.query.q || '';
 
   // TODO: Clean also accents ??
-  q = q.trim();
+  q = q.trim().substring(0, config.QUERY_MAX_LENGTH).trim();
 
   // Perform the query and collect only needed fields for each result:
   const result = (q && searchEngine ? searchEngine.search(q) : [])
@@ -157,7 +157,7 @@ app.get('/', (req, res) => {
 // Search STATS
 app.get('/search-stats', async (req, res, next) => {
 
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   logger.info(`/search/stats called from ${ip}`);
 
   try {
@@ -281,7 +281,7 @@ app.get('/search-stats', async (req, res, next) => {
 
 app.get('/stats/most-wanted', async (req, res, next) => {
 
-  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   logger.info(`/stats/most-wanted called from ${ip}`);
 
   try {

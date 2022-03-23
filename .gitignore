@@ -73,3 +73,5 @@ data*.json
 
 # DDs
 *.sqlite
+sqlites/
+
