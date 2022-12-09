@@ -30,7 +30,7 @@
     "fuse.js": "^6.4.6",
     "googleapis": "^88.2.0",
     "is-stream": "^2.0.0",
-    "nodemon": "^2.0.13",
+    "nodemon": "^2.0.20",
     "sequelize": "^6.6.5",
     "sorted-array": "^2.0.4",
     "sqlite3": "^4.2.0",
