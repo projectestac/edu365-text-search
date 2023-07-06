@@ -25,7 +25,8 @@
  */
 
 const Transport = require('winston-transport');
-const isStream = require('is-stream');
+const isStream = require('isstream');
+
 
 /**
  * Custom Transport for [winston](https://github.com/winstonjs/winston) loggers,

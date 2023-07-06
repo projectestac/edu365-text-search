@@ -83,7 +83,8 @@ async function getRawSpreadsheetData(auth, spreadsheetId, range, majorDimension 
     }, (err, res) => {
       if (err)
         reject(err);
-      resolve(res.data);
+      else
+        resolve(res.data);
     });
   });
 }
@@ -118,7 +119,8 @@ async function updateSingleCell(auth, spreadsheetId, page, col, row, value) {
     }, (err, res) => {
       if (err)
         reject(err);
-      resolve(res);
+      else
+        resolve(res);
     });
   });
 }
@@ -137,13 +139,14 @@ async function getSpreadSheetTitleAndUrl(auth, spreadsheetId) {
       spreadsheetId,
       ranges: [],
       includeGridData: false
-    },(err, res) => {
+    }, (err, res) => {
       if (err)
         reject(err);
-      resolve({
-        title: res.data.properties.title,
-        url: res.data.spreadsheetUrl
-      });
+      else
+        resolve({
+          title: res.data.properties.title,
+          url: res.data.spreadsheetUrl
+        });
     }
     );
   });
@@ -163,13 +166,14 @@ async function cleanSpreadSheetData(auth, spreadsheetId, range) {
     sheets.spreadsheets.values.clear({
       spreadsheetId,
       range: range
-    },(err, res) => {
+    }, (err, res) => {
       if (err)
         reject(err);
-      resolve({
-        spreadsheetId: res.data.spreadsheetId,
-        clearedRange: res.data.clearedRange
-      });
+      else
+        resolve({
+          spreadsheetId: res.data.spreadsheetId,
+          clearedRange: res.data.clearedRange
+        });
     }
     );
   });
@@ -196,10 +200,11 @@ async function writeRows(auth, spreadsheetId, page, data, rowIndex = 1) {
         "majorDimension": "ROWS",
         values: data,
       },
-    },(err, res) => {
+    }, (err, res) => {
       if (err)
         reject(err);
-      resolve(res);
+      else
+        resolve(res);
     }
     );
   });

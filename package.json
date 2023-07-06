@@ -22,19 +22,19 @@
   ],
   "license": "EUPL-1.2",
   "dependencies": {
-    "date-fns": "^2.24.0",
-    "date-fns-tz": "^1.1.6",
-    "dotenv": "^10.0.0",
+    "date-fns": "^2.30.0",
+    "date-fns-tz": "^2.0.0",
+    "dotenv": "^16.3.1",
     "excel-column-name": "^1.0.1",
     "express": "^4.18.2",
-    "fuse.js": "^6.4.6",
-    "googleapis": "^88.2.0",
-    "is-stream": "^2.0.0",
-    "nodemon": "^2.0.20",
-    "sequelize": "^6.29.0",
+    "fuse.js": "^6.6.2",
+    "googleapis": "^120.0.0",
+    "isstream": "^0.1.2",
+    "nodemon": "^2.0.22",
+    "sequelize": "^6.32.1",
     "sorted-array": "^2.0.4",
-    "sqlite3": "^4.2.0",
-    "winston": "^3.3.3",
-    "winston-transport": "^4.4.0"
+    "sqlite3": "^5.1.6",
+    "winston": "^3.9.0",
+    "winston-transport": "^4.5.0"
   }
 }
