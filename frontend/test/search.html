@@ -23,7 +23,7 @@
                 fetch(`${endpoint}${location.search}`)
                     .then(response => {
                         let resp = response.json();
-                        console.log(resp);
+                        // console.log(resp);
                         return resp;
                     })
                     .then(matches => {
@@ -51,7 +51,10 @@
 <body>
     <h1 id="title">Resultats de la cerca</h1>
     <div id="msg"></div>
+    <hr />
     <ul id="results"></ul>
+    <hr />
+    <footer><a href="index.html">Nova cerca</a></footer>
 </body>
 
 </html>
