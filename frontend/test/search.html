@@ -8,7 +8,9 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
 
-            const endpoint = "https://met.xtec.cat/edu365/";
+            // const endpoint = "https://met.xtec.cat/edu365/";
+            // const endpoint = "http://localhost:8765/";
+            const endpoint = "/";
             const msgArea = document.querySelector("#msg");
             const title = document.querySelector("#title");
             const results = document.querySelector("#results");
@@ -27,10 +29,10 @@
                     .then(matches => {
                         msgArea.innerHTML =
                             matches.length === 0 ?
-                            `No s'ha trobat cap resultat` :
-                            matches.length === 1 ?
-                            `S'ha trobat un resultat:` :
-                            `S'han trobat ${matches.length} pàgines:`;
+                                `No s'ha trobat cap resultat` :
+                                matches.length === 1 ?
+                                    `S'ha trobat un resultat:` :
+                                    `S'han trobat ${matches.length} pàgines:`;
 
                         matches.forEach(match => {
                             const li = document.createElement("li");

@@ -23,8 +23,6 @@ function configureDateButtonsFilter(buttonsContainerId, dataTable, col) {
 
   let buttonsContainer = $(`#${buttonsContainerId} .dateButtons`);
   buttonsContainer.find('.todayButton').click(function () {
-    console.log(this);
-    console.log('hola');
     let today = moment().format("DD/MM/YYYY");
     yadcf.exFilterColumn(dataTable, [[col, { from: today, to: today }]], true);
   });
@@ -62,21 +60,21 @@ function configureSearchesTableYadcf(dataTable) {
   ]);
 }
 
-function configureSearchesTable() {
+function configureSearchesTable(auth) {
+  const href = window.location.href; 
   let searchesTable = $('#searchesTable').DataTable({
     dom: 'lrtip',
     processing: true,
     serverSide: true,
     //stateSave: true,
-    language: { "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
+    language: { "url": "https://cdn.datatables.net/plug-ins/1.10.20/i18n/Catalan.json" },
     ajax: {
-      //url: 'http://localhost:8765/search-stats',
-      url: 'https://met.xtec.cat/edu365/search-stats',
+      // url: 'http://localhost:8765/search-stats',
+      // url: 'https://met.xtec.cat/edu365/search-stats',
+      url: href.substring(0, href.lastIndexOf('/')),
       data: function (data) {
-        console.log(data);
-
         const serverData = {
-          auth: 'lhdi8hbGGrja74hwr',
+          auth,
           draw: data.draw,
           page_size: data.length,
           offset: data.start,
@@ -84,8 +82,6 @@ function configureSearchesTable() {
           search: formatYadcfSearch(data.columns),
           tz: moment.tz.guess(),
         };
-        console.log(serverData);
-
         return serverData;
       }
     },
@@ -126,21 +122,21 @@ function configureMostWantedTableYadcf(dataTable) {
   ]);
 }
 
-function configureMostWantedTable() {
+function configureMostWantedTable(auth) {
+  const href = window.location.href;
   let mostWantedTable = $('#mostWantedTable').DataTable({
     dom: 'lrtip',
     processing: true,
     serverSide: true,
     //stateSave: true,
-    language: { "url": "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json" },
+    language: { "url": "https://cdn.datatables.net/plug-ins/1.10.20/i18n/Catalan.json" },
     ajax: {
-      //url: 'http://localhost:8765/stats/most-wanted',
-      url: 'https://met.xtec.cat/edu365/stats/most-wanted',
+      // url: 'http://localhost:8765/stats/most-wanted',
+      // url: 'https://met.xtec.cat/edu365/stats/most-wanted',
+      url: `${href.substring(0, href.lastIndexOf('/'))}/../stats/most-wanted`,
       data: function (data) {
-        console.log(data);
-
         const serverData = {
-          auth: 'lhdi8hbGGrja74hwr',
+          auth,
           draw: data.draw,
           page_size: data.length,
           offset: data.start,
@@ -148,8 +144,6 @@ function configureMostWantedTable() {
           search: formatYadcfSearch(data.columns),
           tz: moment.tz.guess(),
         };
-        console.log(serverData);
-
         return serverData;
       }
     },
@@ -184,6 +178,13 @@ function configureMostWantedTable() {
 }
 
 $(document).ready(function () {
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const auth = urlParams.get('auth');
+
+  if (!auth)
+    alert('Auth required!');
+
   $('.input-daterange input').each(function () {
     $(this).datepicker({
       changeMonth: true,
@@ -193,9 +194,7 @@ $(document).ready(function () {
   });
 
 
-  configureSearchesTable();
-  configureMostWantedTable();
-
-
+  configureSearchesTable(auth);
+  configureMostWantedTable(auth);
 
 });
