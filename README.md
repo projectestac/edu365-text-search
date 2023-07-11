@@ -49,8 +49,7 @@ The configuration values related to the Google spreadsheet data source are:
 The system will automatically generate other Google spreadsheet extracting only the relevant information
 from the Google spreadsheet data source. It is not intended to be modified by the user.
 
-This spreadsheet should be regenerated each time the source one changes by calling the 'build-inde-page'
-endpoing.
+This spreadsheet should be regenerated each time the source one changes by calling the 'build-index-page' endpoint.
 
 The configuration values related to the auto-generated Google spreadsheet:
 
@@ -131,7 +130,18 @@ SEARCH_OPTIONS: {
 
 Please check out [Fuse.js](https://fusejs.io/) for a full description of each option.
 
+## Launching the server with Docker
+In order to run the server in a Docker container, just launch:
 
+```bash
+$ docker compose up
+```
+
+In production environments, it should be better to start the service as a daemon:
+
+```bash
+$ docker compose up -d
+```
 
 ## License
 "Edu365 text search" is an open source development made by the Department of Education of the Government of Catalonia, released under the terms of the [European Union Public Licence v. 1.2](https://eupl.eu/1.2/en/).

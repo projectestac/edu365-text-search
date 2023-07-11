@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  edu365:
+    container_name: edu365-search
+    image: edu365-search
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: node server.js
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    volumes:
+      - ${PWD}/credentials.json:/usr/src/app/credentials.json
+      - ${PWD}/token.json:/usr/src/app/token.json
+      - ${PWD}/.env:/usr/src/app/.env
+      - ${PWD}/db.sqlite:/usr/src/app/db.sqlite
+
+      
