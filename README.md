@@ -91,7 +91,7 @@ $ npm start
 
 After every edit of any page on the site, this URL should be launched on your browser:
 ```
-http://%HOST%:%APP_PORT%/build-index?auth=%AUTH_SECRET%
+http://%HOST%:%APP_PORT%/build-index-page?auth=%AUTH_SECRET%
 ```
 ... replacing `%HOST%` by the host name or IP (usually 'localhost' on the development environment) and `%APP_PORT%`, `%AUTH_SECRET%` by the real values of these variables in `.env`.
 
