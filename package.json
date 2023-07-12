@@ -1,6 +1,6 @@
 {
   "name": "edu365-text-search",
-  "version": "3.0.4",
+  "version": "3.1.0",
   "description": "Search engine for edu365.cat",
   "main": "index.js",
   "private": true,
@@ -9,10 +9,10 @@
     "url": "https://github.com/projectestac/edu365-text-search"
   },
   "scripts": {
-    "start": "node server.js",
-    "startx": "nodemon --ignore sessions/ server.js",
+    "start": "node api/server.js",
+    "startx": "nodemon --ignore sessions/ api/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint . --ext .js"
+    "lint": "eslint api --ext .js"
   },
   "author": "Francesc Busquets <francesc@gmail.com>",
   "licenses": [
@@ -37,5 +37,8 @@
     "sqlite3": "^5.1.6",
     "winston": "^3.10.0",
     "winston-transport": "^4.5.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.44.0"
   }
 }

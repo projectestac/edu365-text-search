@@ -63,7 +63,7 @@ The configuration values related to the auto-generated Google spreadsheet:
 
 ### Credential settings
 
-You must obtain a set of __OAuth2 credentials__ from the [Google API console](https://console.developers.google.com/). These credentials should be downloaded in a file named `credentials.json` and stored on the project root folder. You must also enable the [Google Sheets API](https://developers.google.com/sheets/api/quickstart/js) for a user having read and write rights on this sheet.
+You must obtain a set of __OAuth2 credentials__ from the [Google API console](https://console.developers.google.com/). These credentials should be downloaded in a file named `credentials.json` and stored on the `credentials` folder. You must also enable the [Google Sheets API](https://developers.google.com/sheets/api/quickstart/js) for a user having read and write rights on this sheet.
 
 The next step will be to make a duplicate of the file `.env-example`, calling it `.env`.
 

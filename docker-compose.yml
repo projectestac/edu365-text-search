@@ -6,13 +6,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: node server.js
+    command: node api/server.js
     ports:
       - ${APP_PORT}:${APP_PORT}
     volumes:
-      - ${PWD}/credentials.json:/usr/src/app/credentials.json
-      - ${PWD}/token.json:/usr/src/app/token.json
+      - ${PWD}/credentials:/usr/src/app/credentials
+      - ${PWD}/log:/usr/src/app/log
       - ${PWD}/.env:/usr/src/app/.env
-      - ${PWD}/db.sqlite:/usr/src/app/db.sqlite
 
       

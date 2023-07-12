@@ -60,10 +60,9 @@ typings/
 # next.js build output
 .next
 
-# Googlr API credentials
-credentials.json
-token.json
-data*.json
+# Google API credentials
+credentials/credentials.json
+credentials/token.json
 
 # Express session store
 /sessions
