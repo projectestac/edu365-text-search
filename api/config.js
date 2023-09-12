@@ -55,7 +55,10 @@ let config = {
   },
 
   // Max length allowed in queries
-  QUERY_MAX_LENGTH: 128,
+  QUERY_MAX_LENGTH: process.env.QUERY_MAX_LENGTH || 128,
+
+  // OAuth2 callback port
+  OAUTH2_CALLBACK_PORT: process.env.OAUTH2_CALLBACK_PORT || 3000,
 };
 
 module.exports = Object.freeze(config);
