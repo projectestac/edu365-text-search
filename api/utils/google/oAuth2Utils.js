@@ -80,6 +80,7 @@ async function getNewToken(oAuth2Client, tokenPath, scope, logger) {
   logger.verbose('Generating the authorization URL');
   const authorizeUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
+    prompt: 'consent',
     scope: scope,
   });
 
