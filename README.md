@@ -69,6 +69,10 @@ The next step will be to make a duplicate of the file `.env-example`, calling it
 
 Edit `.env` and set the value of `EDU_MAP_SPREADSHEET_ID` to the identifier of your spreadsheet (the part between `/spreadsheets/d/` and `/edit` of the spreadsheet URL). You should also write a random text on `AUTH_SECRET`. Other settings like the `APP_PORT`, `LOG_LEVEL` or `LOG_FILE` are optional.
 
+NOTE: In order to obtain a "refresh token" for indefinite time, you must first cancel the currently issued permissions for your project. This can be done by visiting:
+https://myaccount.google.com/connections
+
+
 ### Build the main application
 
 Install the dependencies using NPM or Yarn:
