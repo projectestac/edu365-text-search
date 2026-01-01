@@ -27,7 +27,7 @@
     "date-fns-tz": "^2.0.0",
     "dotenv": "^16.3.1",
     "excel-column-name": "^1.0.1",
-    "express": "^4.21.2",
+    "express": "^4.22.1",
     "fuse.js": "^6.6.2",
     "googleapis": "^121.0.0",
     "isstream": "^0.1.2",
