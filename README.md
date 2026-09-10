@@ -1,4 +1,10 @@
 # edu365-text-search
+
+
+| <span style="color:red;font-family:courier;font-size:2rem;span:30px">__WARNING: This project no longer receives updates. It was archived in 2026.__</span> |
+|----|
+
+
 Full text search utilities for websites with static pages.
 
 This project was initially created for [edu365.cat](http://edu365.cat/), a portal with educational content promoted by the Department of Education of the Government of Catalonia. The site was originally built with static HTML pages, and therefore did not have any search engine. "edu365-text-search" extracts text content of columns of a shared Google spreadsheet and provides a simple search API..
